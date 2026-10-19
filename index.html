@@ -1,517 +1,537 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
- <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
- <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
- <title>Cotiza tu Mudanza | NIVEL 9</title>
- <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
- <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
- <style>
- @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap');
- :root {
-   --brand: #ea580c; --brand-hover: #c2410c; --brand-light: #ffedd5;
-   --dark: #111113; --bg: #f4f4f5; --text-muted: #71717a; --border: #e4e4e7;
- }
- * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
- body { background: var(--bg); color: var(--dark); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 10px; -webkit-tap-highlight-color: transparent; }
- 
- .wizard-container { background: white; width: 100%; max-width: 550px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); overflow: hidden; display: flex; flex-direction: column; max-height: 95vh; }
- .wizard-header { background: var(--dark); padding: 25px 20px 20px; text-align: center; color: white; border-bottom: 5px solid var(--brand); flex-shrink: 0; }
- .brand-title { font-size: 1.8rem; font-weight: 800; letter-spacing: 2px; line-height: 1; margin-bottom: 5px; }
- .brand-subtitle { font-size: 0.9rem; color: #a1a1aa; font-weight: 400; }
- .progress-container { width: 100%; height: 6px; background: var(--border); flex-shrink: 0; }
- .progress-bar { height: 100%; background: var(--brand); width: 16%; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
- .wizard-body { padding: 25px 20px; position: relative; overflow-y: auto; flex-grow: 1; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Autocotizador Online | Nivel 9 Logística & Transportes</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap');
+    
+    :root {
+      --brand: #ea580c;
+      --brand-hover: #c2410c;
+      --brand-light: #fff7ed;
+      --brand-border: #ffedd5;
+      --dark: #111113;
+      --dark-card: #18181b;
+      --gray-bg: #f4f4f5;
+      --gray-border: #e4e4e7;
+      --gray-text: #52525b;
+      --success: #25D366;
+    }
 
- .wizard-step { display: none; animation: slideUp 0.4s ease forwards; flex-direction: column; gap: 18px; opacity: 0; }
- .wizard-step.active { display: flex; opacity: 1; }
- 
- h2 { font-size: 1.35rem; color: var(--dark); font-weight: 800; line-height: 1.3; text-align: center; }
- p.instruction { color: var(--text-muted); font-size: 0.9rem; margin-top: -10px; margin-bottom: 5px; text-align: center; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
 
- .input-field { width: 100%; padding: 14px; border: 2px solid var(--border); border-radius: 12px; font-size: 1rem; font-weight: 600; color: var(--dark); transition: all 0.3s; background: #fafafa; }
- .input-field:focus { border-color: var(--brand); outline: none; background: white; box-shadow: 0 4px 15px rgba(234, 88, 12, 0.1); }
- select.input-field { appearance: none; cursor: pointer; }
- 
- .btn { width: 100%; padding: 16px; background: var(--brand); color: white; font-size: 1.1rem; font-weight: 800; border: none; border-radius: 12px; cursor: pointer; transition: all 0.3s; text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: center; align-items: center; gap: 10px; }
- .btn:hover { background: var(--brand-hover); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(234, 88, 12, 0.25); }
- .btn-secondary { background: var(--bg); color: var(--text-muted); width: auto; padding: 16px 22px; }
- .btn-secondary:hover { background: #e4e4e7; box-shadow: none; color: var(--dark); }
- .btn-whatsapp { background: #25D366; font-size: 1rem; }
- .btn-whatsapp:hover { background: #1ebc5a; box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3); }
+    body {
+      background-color: var(--gray-bg);
+      color: var(--dark);
+      padding: 20px 12px;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 680px;
+      background: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      border: 1px solid var(--gray-border);
+    }
+    
+    .header {
+      background: var(--dark);
+      padding: 30px 20px;
+      text-align: center;
+      border-bottom: 5px solid var(--brand);
+      color: #ffffff;
+      position: relative;
+    }
 
- .service-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
- .service-card { border: 2px solid var(--border); padding: 20px 10px; border-radius: 16px; cursor: pointer; transition: all 0.3s; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; background: white; }
- .service-card i { font-size: 2rem; color: var(--text-muted); transition: 0.3s; }
- .service-card span { font-weight: 700; font-size: 0.95rem; color: var(--text-muted); }
- .service-card.selected { border-color: var(--brand); background: var(--brand-light); }
- .service-card.selected i, .service-card.selected span { color: var(--brand); }
- .controls-row { display: flex; gap: 10px; margin-top: 10px; }
+    .brand-logo-svg {
+      height: 55px;
+      width: auto;
+      margin-bottom: 10px;
+      display: inline-block;
+    }
 
- .access-grid { display: grid; grid-template-columns: 1fr; gap: 10px; background: #fafafa; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
- .access-header { font-weight: 800; font-size: 0.95rem; color: var(--brand); margin-bottom: 5px; border-bottom: 1px solid var(--border); padding-bottom: 5px; }
- .access-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
- .checkbox-label { display: flex; align-items: center; gap: 5px; font-size: 0.9rem; font-weight: 600; cursor: pointer; color: var(--text-muted); }
- #clientMap { width: 100%; height: 200px; border-radius: 12px; border: 1px solid var(--border); display: none; margin-top: 10px; z-index: 1; }
+    .header h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #a1a1aa;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-top: 5px;
+    }
 
- .inventory-list { display: flex; flex-direction: column; gap: 10px; }
- .inventory-group { background: white; border: 2px solid var(--border); border-radius: 12px; overflow: hidden; }
- .inv-header { padding: 12px 15px; background: #fafafa; font-weight: 700; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border-bottom: 1px solid var(--border); }
- .inv-items { padding: 10px; display: none; flex-direction: column; gap: 8px; }
- .inv-items.open { display: flex; }
- .inv-item-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 5px; border-bottom: 1px dashed var(--border); }
- .inv-item-row:last-child { border-bottom: none; }
- .inv-item-info { display: flex; flex-direction: column; }
- .inv-item-name { font-size: 0.9rem; font-weight: 700; color: var(--dark); }
- .inv-item-m3 { font-size: 0.75rem; color: var(--text-muted); }
- .counter-controls { display: flex; align-items: center; gap: 10px; }
- .counter-btn { background: var(--bg); border: none; width: 28px; height: 28px; border-radius: 6px; font-weight: 800; font-size: 1.1rem; color: var(--dark); cursor: pointer; display: flex; align-items: center; justify-content: center; }
- .counter-val { font-weight: 800; font-size: 1rem; width: 20px; text-align: center; color: var(--brand); }
- .loader-spinner { display: none; border: 4px solid rgba(0,0,0,0.1); width: 40px; height: 40px; border-radius: 50%; border-left-color: var(--brand); animation: spin 1s linear infinite; margin: 15px auto; }
+    .content-form {
+      padding: 28px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
 
- @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
- @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
- </style>
- <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    @media (max-width: 540px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    label {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: #27272a;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    label i {
+      color: var(--brand);
+    }
+
+    input, select, textarea {
+      padding: 13px 15px;
+      border: 1.5px solid var(--gray-border);
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      background-color: #ffffff;
+      color: var(--dark);
+      transition: all 0.2s ease;
+      width: 100%;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--brand);
+      background-color: #fafafa;
+      box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.12);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 110px;
+      line-height: 1.45;
+    }
+
+    /* MÓDULO MARINA IA ESCÁNER */
+    .marina-card {
+      background: var(--brand-light);
+      border: 2px dashed var(--brand);
+      border-radius: 16px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+    }
+
+    .marina-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .marina-icon-badge {
+      background: var(--brand);
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .marina-title {
+      color: var(--brand);
+      font-weight: 800;
+      font-size: 1.02rem;
+      line-height: 1.2;
+    }
+
+    .marina-description {
+      font-size: 0.82rem;
+      color: var(--gray-text);
+      line-height: 1.4;
+    }
+
+    .file-input-wrapper {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+      width: 100%;
+    }
+
+    .file-input-wrapper input[type="file"] {
+      padding: 10px;
+      background: #ffffff;
+      font-size: 0.82rem;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .btn {
+      padding: 15px 20px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.98rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .btn-marina {
+      background: var(--brand);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(234, 88, 12, 0.25);
+    }
+
+    .btn-marina:hover:not(:disabled) {
+      background: var(--brand-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-marina:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .btn-whatsapp {
+      background: var(--success);
+      color: #ffffff;
+      font-size: 1.05rem;
+      padding: 17px;
+      box-shadow: 0 6px 18px rgba(37, 211, 102, 0.28);
+      margin-top: 5px;
+    }
+
+    .btn-whatsapp:hover {
+      background: #20bd5a;
+      transform: translateY(-1px);
+    }
+
+    .status-box {
+      display: none;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .status-box.active {
+      display: block;
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #86efac;
+    }
+
+    .footer-disclaimer {
+      text-align: center;
+      font-size: 0.76rem;
+      color: #71717a;
+      line-height: 1.4;
+      border-top: 1px solid var(--gray-border);
+      padding-top: 16px;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
 
- <div class="wizard-container">
-   <div class="wizard-header">
-     <div class="brand-title">NIVEL 9</div>
-     <div class="brand-subtitle">Cotizador Rápido de Movimientos</div>
-   </div>
-   <div class="progress-container"><div class="progress-bar" id="wizProgress"></div></div>
+<div class="container">
+  
+  <!-- CABECERA INSTITUCIONAL LOGO NIVEL 9 -->
+  <div class="header">
+    <svg class="brand-logo-svg" viewBox="0 0 500 120">
+      <text x="10" y="70" font-family="'Outfit', sans-serif" font-weight="800" font-size="70" fill="#ffffff">NIVEL</text>
+      <text x="210" y="70" font-family="'Outfit', sans-serif" font-weight="800" font-size="75" fill="#ea580c">9</text>
+      <rect x="10" y="85" width="260" height="4" fill="#ea580c" />
+      <text x="10" y="105" font-family="'Outfit', sans-serif" font-weight="600" font-size="14" fill="#a1a1aa" letter-spacing="4">LOGISTICA DE EXCELENCIA</text>
+    </svg>
+    <h1>Solicitud de Cotización Online</h1>
+  </div>
 
-   <div class="wizard-body">
-     
-     <!-- PASO 1 -->
-     <div class="wizard-step active" id="step-1">
-       <h2>¡Hola! 👋<br>¿Cómo te llamas?</h2>
-       <p class="instruction">Para brindarte una atención 100% personalizada.</p>
-       <input type="text" class="input-field" id="wizNombre" placeholder="Tu nombre y apellido" autocomplete="name" style="text-align: center;">
-       <button type="button" class="btn" onclick="iniciarYRegistrarLead()">Comenzar <i class="fas fa-arrow-right"></i></button>
-     </div>
+  <!-- FORMULARIO DE AUTOCOTIZACIÓN -->
+  <form class="content-form" id="formCotizador" onsubmit="enviarSolicitudCotizacion(event)">
+    
+    <div class="form-row">
+      <div class="form-group">
+        <label for="cliente"><i class="fas fa-user"></i> Nombre y Apellido *</label>
+        <input type="text" id="cliente" name="cliente" placeholder="Ej: Juan Pérez" required>
+      </div>
+      <div class="form-group">
+        <label for="telefono"><i class="fas fa-phone-alt"></i> Teléfono / WhatsApp *</label>
+        <input type="tel" id="telefono" name="telefono" placeholder="Ej: 3512469122" required>
+      </div>
+    </div>
 
-     <!-- PASO 2 -->
-     <div class="wizard-step" id="step-2">
-       <h2>Tipo de Servicio 🚚</h2>
-       <div class="service-grid">
-         <div class="service-card selected" onclick="selectService('Mudanza Local', this)">
-           <i class="fas fa-city"></i><span>Mudanza Local</span>
-         </div>
-         <div class="service-card" onclick="selectService('Mudanza Larga', this)">
-           <i class="fas fa-road"></i><span>Mudanza Larga<br><small>(+ de 100km)</small></span>
-         </div>
-       </div>
-       <input type="hidden" id="wizServicio" value="Mudanza Local">
-       <div class="controls-row">
-         <button type="button" class="btn btn-secondary" onclick="prevStep(2, 1)"><i class="fas fa-arrow-left"></i></button>
-         <button type="button" class="btn" onclick="nextStep(2, 3)">Siguiente</button>
-       </div>
-     </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="fecha"><i class="fas fa-calendar-alt"></i> Fecha del Servicio *</label>
+        <input type="date" id="fecha" name="fecha" required>
+      </div>
+      <div class="form-group">
+        <label for="tipomov"><i class="fas fa-truck-loading"></i> Tipo de Servicio *</label>
+        <select id="tipomov" name="tipomov" required>
+          <option value="Mudanza Local">Mudanza Local (Córdoba / Valle)</option>
+          <option value="Mudanza Larga">Mudanza Larga Distancia (Nacional)</option>
+          <option value="Flete Comercial">Flete Comercial / Carga Especial</option>
+          <option value="Trabajos Especiales">Trabajos Especiales / Izajes</option>
+        </select>
+      </div>
+    </div>
 
-     <!-- PASO 3 -->
-     <div class="wizard-step" id="step-3">
-       <h2>¿De dónde a dónde? 📍</h2>
-       <p class="instruction" id="inst-locales">Indica el Barrio o Dirección.</p>
-       <p class="instruction" id="inst-larga" style="display:none; color:var(--brand); font-weight:600;">Escribe Localidad y Provincia (Ej: Caballito, CABA ó Río Cuarto, Córdoba).</p>
-       
-       <div style="display:flex; flex-direction:column; gap:10px;">
-         <input type="text" class="input-field" id="wizOrigen" placeholder="Origen">
-         <div style="text-align:center; color:var(--brand);"><i class="fas fa-arrow-down"></i></div>
-         <input type="text" class="input-field" id="wizDestino" placeholder="Destino">
-       </div>
-       
-       <button type="button" id="btnCalcRuta" class="btn btn-secondary" style="display:none; width:100%; border:1px solid var(--border); font-size:0.9rem;" onclick="calcularRuta()">
-         <i class="fas fa-map-marked-alt"></i> Validar Ruta y Calcular Km
-       </button>
-       <div id="calcStatus" style="text-align:center; font-size:0.85rem; color:var(--brand); font-weight:bold; display:none;"></div>
-       <div id="clientMap"></div>
-       <input type="hidden" id="wizKms" value="0">
+    <div class="form-group">
+      <label for="origen"><i class="fas fa-map-marker-alt"></i> Domicilio de Origen *</label>
+      <input type="text" id="origen" name="origen" placeholder="Ej: Rómulo Carbia 3381, Córdoba" required>
+    </div>
 
-       <div class="controls-row">
-         <button type="button" class="btn btn-secondary" onclick="prevStep(3, 2)"><i class="fas fa-arrow-left"></i></button>
-         <button type="button" class="btn" onclick="nextStep(3, 4)">Siguiente</button>
-       </div>
-     </div>
+    <div class="form-group">
+      <label for="destino"><i class="fas fa-flag-checkered"></i> Domicilio de Destino *</label>
+      <input type="text" id="destino" name="destino" placeholder="Ej: San Martín 150, Carlos Paz" required>
+    </div>
 
-     <!-- PASO 4 -->
-     <div class="wizard-step" id="step-4">
-       <h2>Detalles de Acceso 🏢</h2>
-       
-       <div class="access-grid">
-         <div class="access-header">📍 Origen</div>
-         <div class="access-row">
-           <select class="input-field" id="acc-ori-tipo" style="padding:10px; width:45%;" onchange="togglePiso('ori')">
-             <option value="PB">Planta Baja</option><option value="Piso">Piso</option>
-           </select>
-           <input type="number" id="acc-ori-piso" class="input-field" placeholder="N°" style="display:none; padding:10px; width:25%;">
-         </div>
-         <div class="access-row">
-           <label class="checkbox-label"><input type="checkbox" id="acc-ori-asc"> Ascensor</label>
-           <label class="checkbox-label"><input type="checkbox" id="acc-ori-esc"> Escalera</label>
-         </div>
-       </div>
+    <!-- MÓDULO INTEGRADO: MARINA IA ESCÁNER MULTIMODAL -->
+    <div class="marina-card">
+      <div class="marina-header">
+        <div class="marina-icon-badge">
+          <i class="fas fa-robot"></i>
+        </div>
+        <div>
+          <div class="marina-title">Marina IA - Reconocimiento de Bienes</div>
+          <p class="marina-description">
+            Suba fotos o grabe un video de sus ambientes y muebles. Marina armará el inventario detallado y calculará la volumetría ($m^3$) automáticamente.
+          </p>
+        </div>
+      </div>
 
-       <div class="access-grid">
-         <div class="access-header">🏁 Destino</div>
-         <div class="access-row">
-           <select class="input-field" id="acc-des-tipo" style="padding:10px; width:45%;" onchange="togglePiso('des')">
-             <option value="PB">Planta Baja</option><option value="Piso">Piso</option>
-           </select>
-           <input type="number" id="acc-des-piso" class="input-field" placeholder="N°" style="display:none; padding:10px; width:25%;">
-         </div>
-         <div class="access-row">
-           <label class="checkbox-label"><input type="checkbox" id="acc-des-asc"> Ascensor</label>
-           <label class="checkbox-label"><input type="checkbox" id="acc-des-esc"> Escalera</label>
-         </div>
-       </div>
+      <div class="file-input-wrapper">
+        <input type="file" id="marina-cliente-archivos" accept="image/*,video/*" multiple capture="environment">
+      </div>
 
-       <div style="margin-top:5px;">
-         <p class="instruction" style="text-align:left;">Fecha Estimativa:</p>
-         <input type="date" class="input-field" id="wizFecha" style="padding:10px;">
-       </div>
+      <button type="button" class="btn btn-marina" id="btn-marina-cliente" onclick="procesarFotosConMarinaIA()">
+        <i class="fas fa-camera"></i> Escanear con Marina IA
+      </button>
 
-       <div class="controls-row">
-         <button type="button" class="btn btn-secondary" onclick="prevStep(4, 3)"><i class="fas fa-arrow-left"></i></button>
-         <button type="button" class="btn" onclick="nextStep(4, 5)">Siguiente</button>
-       </div>
-     </div>
+      <div class="status-box" id="marina-status"></div>
+    </div>
 
-     <!-- PASO 5 -->
-     <div class="wizard-step" id="step-5">
-       <h2>¿Qué llevamos? 🛋️</h2>
-       <p class="instruction">Selecciona cantidades exactas.</p>
-       
-       <div class="inventory-list" id="inventoryContainer"></div>
-       
-       <textarea class="input-field" id="wizDetalles" placeholder="¿Otros muebles? Detállalo aquí..." style="margin-top:10px; min-height:60px; font-size:0.9rem; resize:none;"></textarea>
+    <!-- DETALLES E INVENTARIO GUARDADO -->
+    <div class="form-group">
+      <label for="detalles"><i class="fas fa-boxes"></i> Inventario y Detalle de Bienes *</label>
+      <textarea id="detalles" name="detalles" placeholder="El resultado del escaneo de Marina IA aparecerá aquí automáticamente. También puede redactar o agregar objetos manualmente (Ej: 1 Juego de Comedor, 1 Heladera, 15 Cajas, Piso 2 por escalera)." required></textarea>
+    </div>
 
-       <div class="controls-row">
-         <button type="button" class="btn btn-secondary" onclick="prevStep(5, 4)"><i class="fas fa-arrow-left"></i></button>
-         <button type="button" class="btn" onclick="finalizarYEnviar()">Siguiente <i class="fas fa-arrow-right"></i></button>
-       </div>
-     </div>
+    <!-- BOTÓN FINAL DE ENVÍO -->
+    <button type="submit" class="btn btn-whatsapp" id="btn-enviar-cotizacion">
+      <i class="fab fa-whatsapp"></i> Enviar Cotización por WhatsApp
+    </button>
 
-     <!-- PASO 6 -->
-     <div class="wizard-step" id="step-6" style="text-align:center;">
-       <h2>¡Todo Listo! 🚀</h2>
-       <p style="color:var(--text-muted); font-size:1.05rem; margin: 15px 0 20px;">Los detalles de tu mudanza están estructurados y listos para presupuestar.</p>
-       
-       <div id="wizLoader" class="loader-spinner"></div>
+    <div class="footer-disclaimer">
+      🔒 <strong>NIVEL 9 S.A.S. — Logística de Excelencia</strong><br>
+      Director: Lic. Rodrigo J. Castro | CUIT: 20-24691221-2 | Córdoba, Argentina.<br>
+      Tus datos e inventarios son procesados de forma privada para confeccionar la hoja de ruta operativa.
+    </div>
 
-       <div class="controls-row" id="botonesFinales" style="flex-direction:column; gap:15px;">
-         <button type="button" class="btn btn-whatsapp" onclick="enviarWhatsAppFinal()" style="padding: 20px;">
-           <i class="fab fa-whatsapp" style="font-size:1.5rem;"></i> Enviar Cotización por WhatsApp
-         </button>
-         <button type="button" class="btn btn-secondary" onclick="prevStep(6, 5)" style="width:100%; border:none;">Volver a revisar</button>
-       </div>
-     </div>
+  </form>
+</div>
 
-   </div>
- </div>
+<script>
+  // ==========================================
+  // CONFIGURACIÓN DE URL DE BACKEND GOOGLE APPS SCRIPT
+  // ==========================================
+  const webAppUrl = 'https://script.google.com/macros/s/AKfycbzlPvSLzV5xHm_JGT-RlG2GaykQz_D-Gf-8TCEZvL4ywdyIW81SqnIobokaurioPb0T/exec';
 
- <script>
-   const oficialWhatsApp = "5493517046541";
-   
-   // --- URL VERSIÓN 7 - EL CEREBRO ---
-   const webAppUrl = 'https://script.google.com/macros/s/AKfycbxVupvjk9c731bM3W0tRCP9hbMr3tCo9iHZ2zeqJs4No2Kp8_JKTABJHaZ3WjOjzBzW/exec';
-   
-   let globalEvents = [];
-   const leadId = 'WEB-' + Date.now();
-   let map = null;
-   let routeLayer = null;
-   let regionProcedencia = "Autocotizador Web (Córdoba / Argentina)";
+  // Establecer fecha mínima en el selector (Hoy)
+  document.addEventListener('DOMContentLoaded', () => {
+    const todayStr = new Date().toISOString().split('T')[0];
+    document.getElementById('fecha').value = todayStr;
+    document.getElementById('fecha').min = todayStr;
+  });
 
-   // Carga inicial y captura silenciosa de IP/Región
-   window.addEventListener('DOMContentLoaded', async () => {
-     try {
-       const ipRes = await fetch('https://ipapi.co/json/');
-       const ipData = await ipRes.json();
-       if (ipData && ipData.city) {
-         regionProcedencia = `Autocotizador Web (${ipData.city}, ${ipData.region} - IP: ${ipData.ip})`;
-       }
-     } catch (e) {}
+  // ==========================================
+  // 1. PROCESAMIENTO DE IMÁGENES/VIDEOS CON MARINA IA
+  // ==========================================
+  async function procesarFotosConMarinaIA() {
+    const inputArchivos = document.getElementById('marina-cliente-archivos');
+    const btn = document.getElementById('btn-marina-cliente');
+    const statusBox = document.getElementById('marina-status');
 
-     try {
-       const res = await fetch(webAppUrl);
-       const data = await res.json();
-       if (Array.isArray(data)) globalEvents = data;
-     } catch (e) {}
-   });
+    if (!inputArchivos.files || inputArchivos.files.length === 0) {
+      alert("Por favor seleccione o tome al menos una foto/video de sus muebles.");
+      return;
+    }
 
-   const invDB = [
-     { group: "Camas / Dormitorio", items: [
-       { id: "cama1", name: "Cama 1 Plaza", m3: 1.2 },
-       { id: "cama15", name: "Cama 1.5 Plazas", m3: 1.5 },
-       { id: "cama2", name: "Cama 2 Plazas", m3: 2.2 },
-       { id: "camaQ", name: "Cama Queen", m3: 2.8 },
-       { id: "camaK", name: "Cama King", m3: 3.5 },
-       { id: "ropero", name: "Placard / Ropero (Desarmado)", m3: 1.5 },
-       { id: "mesaLuz", name: "Mesa de Luz", m3: 0.3 }
-     ]},
-     { group: "Cocina / Lavadero", items: [
-       { id: "helaCh", name: "Heladera (Frigobar/Chica)", m3: 0.8 },
-       { id: "helaEs", name: "Heladera Estándar", m3: 1.5 },
-       { id: "helaDo", name: "Heladera Doble Puerta", m3: 2.5 },
-       { id: "lavarr", name: "Lavarropas", m3: 0.6 },
-       { id: "cocina", name: "Cocina / Horno", m3: 0.5 }
-     ]},
-     { group: "Living / Comedor", items: [
-       { id: "sillon1", name: "Sillón 1 Cuerpo", m3: 1.0 },
-       { id: "sillon2", name: "Sillón 2 Cuerpos", m3: 2.0 },
-       { id: "sillon3", name: "Sillón 3 Cuerpos", m3: 3.0 },
-       { id: "sillonE", name: "Sillón Esquinero (L)", m3: 4.5 },
-       { id: "mesa4", name: "Mesa Comedor + 4 Sillas", m3: 2.5 },
-       { id: "mesa6", name: "Mesa Comedor + 6 Sillas", m3: 3.5 },
-       { id: "tv", name: "Rack TV", m3: 0.8 }
-     ]},
-     { group: "Cajas / Bultos", items: [
-       { id: "cajaCh", name: "Caja Chica", m3: 0.05 },
-       { id: "cajaGr", name: "Caja Grande / Bolsa", m3: 0.15 },
-       { id: "bici", name: "Bicicleta", m3: 0.4 }
-     ]}
-   ];
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Marina está analizando los bienes...';
+    btn.disabled = true;
+    statusBox.className = 'status-box';
+    statusBox.style.display = 'none';
 
-   let userInventory = {};
+    try {
+      const listaArchivosBase64 = [];
+      
+      for (let file of inputArchivos.files) {
+        const dataUrl = await convertirArchivoABase64(file);
+        // Extraer base64 puro removiendo la cabecera data:image/...;base64,
+        const cleanBase64 = dataUrl.split(',')[1];
+        
+        listaArchivosBase64.push({
+          mimeType: file.type || 'image/jpeg',
+          base64Data: cleanBase64
+        });
+      }
 
-   window.addEventListener('load', () => {
-     const container = document.getElementById('inventoryContainer');
-     invDB.forEach((g, idx) => {
-       let html = `<div class="inventory-group">
-         <div class="inv-header" onclick="toggleInvGroup('grp-${idx}')"><span>${g.group}</span><i class="fas fa-chevron-down"></i></div>
-         <div class="inv-items" id="grp-${idx}">`;
-       g.items.forEach(item => {
-         userInventory[item.id] = { count: 0, name: item.name, m3: item.m3 };
-         html += `
-           <div class="inv-item-row">
-             <div class="inv-item-info"><span class="inv-item-name">${item.name}</span><span class="inv-item-m3">~${item.m3}m³ c/u</span></div>
-             <div class="counter-controls">
-               <button type="button" class="counter-btn" onclick="modItem('${item.id}', -1)">-</button>
-               <span class="counter-val" id="val-${item.id}">0</span>
-               <button type="button" class="counter-btn" onclick="modItem('${item.id}', 1)">+</button>
-             </div>
-           </div>`;
-       });
-       html += `</div></div>`;
-       container.innerHTML += html;
-     });
-   });
+      // Envío POST al servidor backend Apps Script
+      const response = await fetch(webAppUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          action: "escaneoMarina",
+          archivos: listaArchivosBase64
+        })
+      });
 
-   function toggleInvGroup(id) { document.getElementById(id).classList.toggle('open'); }
-   function modItem(id, val) {
-     userInventory[id].count += val;
-     if(userInventory[id].count < 0) userInventory[id].count = 0;
-     document.getElementById(`val-${id}`).textContent = userInventory[id].count;
-   }
+      const data = await response.json();
 
-   function selectService(service, element) {
-     document.getElementById('wizServicio').value = service;
-     document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
-     element.classList.add('selected');
-     
-     if(service === 'Mudanza Larga') {
-       document.getElementById('inst-locales').style.display = 'none';
-       document.getElementById('inst-larga').style.display = 'block';
-       document.getElementById('btnCalcRuta').style.display = 'block';
-       document.getElementById('clientMap').style.display = 'block';
-       if(!map) initMap();
-     } else {
-       document.getElementById('inst-locales').style.display = 'block';
-       document.getElementById('inst-larga').style.display = 'none';
-       document.getElementById('btnCalcRuta').style.display = 'none';
-       document.getElementById('clientMap').style.display = 'none';
-       document.getElementById('calcStatus').style.display = 'none';
-       document.getElementById('wizKms').value = 0;
-     }
-   }
+      if (data.success && data.result) {
+        const campoInventario = document.getElementById('detalles');
+        
+        // Concatena si ya había texto o asigna el nuevo inventario
+        if (campoInventario.value.trim() === "") {
+          campoInventario.value = data.result;
+        } else {
+          campoInventario.value = campoInventario.value + "\n\n" + data.result;
+        }
 
-   function initMap() {
-     map = L.map('clientMap').setView([-31.4201, -64.1888], 5);
-     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-   }
+        statusBox.innerHTML = "✅ ¡Inventario y volumetría analizados correctamente por Marina IA!";
+        statusBox.classList.add('active');
+        alert("✅ Marina IA ha procesado sus bienes y volcado el inventario en el formulario.");
+      } else {
+        alert("No se pudo interpretar el contenido de las fotos. Por favor complete el inventario manualmente.");
+      }
 
-   async function calcularRuta() {
-     const ori = document.getElementById('wizOrigen').value.trim();
-     const des = document.getElementById('wizDestino').value.trim();
-     const status = document.getElementById('calcStatus');
-     if(!ori || !des) { alert("Ingresa origen y destino para calcular."); return; }
-     
-     status.style.display = 'block';
-     status.textContent = "Buscando coordenadas y trazando ruta...";
-     try {
-       const resOri = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(ori)}`);
-       const dataOri = await resOri.json();
-       const resDes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(des)}`);
-       const dataDes = await resDes.json();
-       
-       if(dataOri.length === 0 || dataDes.length === 0) { status.textContent = "Ubicación no encontrada."; return; }
-       
-       const cOri = [dataOri[0].lat, dataOri[0].lon];
-       const cDes = [dataDes[0].lat, dataDes[0].lon];
-       
-       const resRuta = await fetch(`https://router.project-osrm.org/route/v1/driving/${cOri[1]},${cOri[0]};${cDes[1]},${cDes[0]}?overview=full&geometries=geojson`);
-       const dataRuta = await resRuta.json();
-       if(dataRuta.code !== 'Ok') throw new Error();
-       
-       const kms = (dataRuta.routes[0].distance / 1000).toFixed(1);
-       document.getElementById('wizKms').value = kms;
-       status.textContent = `¡Ruta trazada! Distancia: ${kms} km`;
-       
-       if(routeLayer) map.removeLayer(routeLayer);
-       const coords = dataRuta.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
-       routeLayer = L.polyline(coords, {color: '#ea580c', weight: 4}).addTo(map);
-       map.fitBounds(routeLayer.getBounds(), {padding: [20,20]});
-     } catch (err) {
-       status.textContent = "Error al trazar ruta, pero puedes continuar.";
-     }
-   }
+    } catch (error) {
+      alert("Error al comunicar con Marina IA: " + error.message);
+    } finally {
+      btn.innerHTML = '<i class="fas fa-camera"></i> Escanear con Marina IA';
+      btn.disabled = false;
+    }
+  }
 
-   function togglePiso(modo) {
-     const tipo = document.getElementById(`acc-${modo}-tipo`).value;
-     document.getElementById(`acc-${modo}-piso`).style.display = (tipo === 'Piso') ? 'block' : 'none';
-   }
-   
-   function getAccessString(modo) {
-     const tipo = document.getElementById(`acc-${modo}-tipo`).value;
-     const piso = document.getElementById(`acc-${modo}-piso`).value;
-     const asc = document.getElementById(`acc-${modo}-asc`).checked;
-     const esc = document.getElementById(`acc-${modo}-esc`).checked;
-     let str = tipo === 'PB' ? 'Planta Baja' : `Piso ${piso || '?'}`;
-     let extras = [];
-     if(asc) extras.push("Ascensor");
-     if(esc) extras.push("Escalera");
-     if(extras.length > 0) str += ` (${extras.join(', ')})`;
-     return str;
-   }
+  function convertirArchivoABase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (err) => reject(err);
+    });
+  }
 
-   function iniciarYRegistrarLead() {
-     const nombre = document.getElementById('wizNombre').value.trim();
-     if(nombre === '') { alert("Indícanos tu nombre."); return; }
-     sincronizarDatosServidor('Autocotizador Iniciado (Pendiente)');
-     nextStep(1, 2);
-   }
+  // ==========================================
+  // 2. ENVÍO DE AUTOCOTIZACIÓN (AGENDA + WHATSAPP)
+  // ==========================================
+  async function enviarSolicitudCotizacion(event) {
+    event.preventDefault();
 
-   function nextStep(current, next) {
-     if(current === 3 && (document.getElementById('wizOrigen').value.trim() === '' || document.getElementById('wizDestino').value.trim() === '')) { alert("Indícanos origen y destino."); return; }
-     if(current === 4 && document.getElementById('wizFecha').value === '') { alert("Selecciona una fecha."); return; }
-     
-     document.getElementById(`step-${current}`).classList.remove('active');
-     document.getElementById(`step-${next}`).classList.add('active');
-     document.getElementById('wizProgress').style.width = (next * 16.6) + '%';
-     
-     if(next === 3 && document.getElementById('wizServicio').value === 'Mudanza Larga' && map) {
-         setTimeout(() => map.invalidateSize(), 300);
-     }
-   }
+    const btnEnviar = document.getElementById('btn-enviar-cotizacion');
+    btnEnviar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registrando en Agenda...';
+    btnEnviar.disabled = true;
 
-   function prevStep(current, prev) {
-     document.getElementById(`step-${current}`).classList.remove('active');
-     document.getElementById(`step-${prev}`).classList.add('active');
-     document.getElementById('wizProgress').style.width = (prev * 16.6) + '%';
-   }
+    const cliente = document.getElementById('cliente').value.trim();
+    const telefono = document.getElementById('telefono').value.trim();
+    const fecha = document.getElementById('fecha').value;
+    const tipomov = document.getElementById('tipomov').value;
+    const origen = document.getElementById('origen').value.trim();
+    const destino = document.getElementById('destino').value.trim();
+    const inventario = document.getElementById('detalles').value.trim();
 
-   function sincronizarDatosServidor(estadoLead) {
-     const nom = document.getElementById('wizNombre').value.trim() || "Cliente Anónimo";
-     const srv = document.getElementById('wizServicio').value;
-     const ori = document.getElementById('wizOrigen').value.trim() || "No especificado";
-     const des = document.getElementById('wizDestino').value.trim() || "No especificado";
-     const fec = document.getElementById('wizFecha').value || new Date().toISOString().split('T')[0];
-     const ext = document.getElementById('wizDetalles').value.trim();
+    // Objeto para persistir directamente en Google Sheets (Pestaña Movimientos de la Agenda)
+    const payloadMovimiento = {
+      id: "AUTO-" + Date.now(),
+      fecha: fecha,
+      estado: "Autocotización",
+      cliente: cliente,
+      telefono: telefono,
+      tipomov: tipomov,
+      origen: origen,
+      destino: destino,
+      detalles: inventario,
+      inventario: inventario,
+      asignacion: "A confirmar",
+      presupuesto: 0,
+      sena: 0,
+      combustible: 0,
+      peajesCosto: 0,
+      gastosviaticos: 0,
+      ayudante: 0,
+      comision: 0,
+      total: 0
+    };
 
-     const leadData = {
-       id: leadId,
-       createdAt: new Date().toISOString(),
-       fecha: fec,
-       estado: estadoLead,
-       cliente: nom,
-       telefono: regionProcedencia,
-       tipomov: srv,
-       origen: ori,
-       destino: des,
-       detalles: ext ? `Notas: ${ext}` : 'En proceso...',
-       presupuesto: 0,
-       asignacion: "Por definir"
-     };
+    // Envío en segundo plano al backend
+    try {
+      await fetch(webAppUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payloadMovimiento)
+      });
+    } catch (err) {
+      console.log("Notificación: Registro diferido a servidor local.");
+    }
 
-     const idx = globalEvents.findIndex(x => String(x.id) === String(leadId));
-     if (idx >= 0) { globalEvents[idx] = leadData; } else { globalEvents.push(leadData); }
+    // Construcción del mensaje formateado para enviar por WhatsApp
+    const mensajeWhatsApp = `🚚 *NUEVA AUTOCOTIZACIÓN - NIVEL 9*
+👤 *Cliente:* ${cliente}
+📱 *Teléfono:* ${telefono}
+📅 *Fecha Solicitada:* ${fecha}
+🚛 *Tipo de Servicio:* ${tipomov}
 
-     try {
-       fetch(webAppUrl, {
-         method: 'POST',
-         mode: 'no-cors',
-         headers: { 'Content-Type': 'application/json' },
-         body: JSON.stringify(globalEvents)
-       });
-     } catch(e) {}
-   }
+📍 *Origen:* ${origen}
+🏁 *Destino:* ${destino}
 
-   window.addEventListener('beforeunload', () => {
-     sincronizarDatosServidor('Autocotización ABORTADA ❌');
-   });
+📦 *INVENTARIO DETALLADO DE CARGA:*
+${inventario}`;
 
-   function finalizarYEnviar() {
-     sincronizarDatosServidor('Autocotización Completada ⏳');
-     nextStep(5, 6);
-   }
+    const urlWhatsApp = `https://wa.me/5493512469122?text=${encodeURIComponent(mensajeWhatsApp)}`;
 
-   function enviarWhatsAppFinal() {
-     sincronizarDatosServidor('Autocotización Exitosa (Enviado a WSP) ✅');
-     
-     let invTextLines = [];
-     let totalM3 = 0;
-     for (let key in userInventory) {
-       if (userInventory[key].count > 0) {
-         invTextLines.push(`▪️ ${userInventory[key].count}x ${userInventory[key].name}`);
-         totalM3 += (userInventory[key].count * userInventory[key].m3);
-       }
-     }
-     
-     let vehiculoSugerido = "Por definir";
-     if(totalM3 > 0) {
-         if(totalM3 <= 10) vehiculoSugerido = "Sprinter Furgón";
-         else if(totalM3 <= 18) vehiculoSugerido = "Sprinter Chasis (Caja paquetero)";
-         else vehiculoSugerido = "Camión 712 (Alta Capacidad)";
-     }
+    // Redirección directa a WhatsApp
+    window.location.href = urlWhatsApp;
+  }
+</script>
 
-     const nom = document.getElementById('wizNombre').value.trim();
-     const srv = document.getElementById('wizServicio').value;
-     const ori = document.getElementById('wizOrigen').value.trim();
-     const accOri = getAccessString('ori');
-     const des = document.getElementById('wizDestino').value.trim();
-     const accDes = getAccessString('des');
-     const fec = document.getElementById('wizFecha').value;
-     const kms = document.getElementById('wizKms').value;
-     const ext = document.getElementById('wizDetalles').value.trim();
-
-     let msj = `Hola *NIVEL 9*! 👋 Soy ${nom}.\nSolicito presupuesto generado desde la web:\n\n`;
-     msj += `🚚 *Servicio:* ${srv}\n`;
-     if(srv === 'Mudanza Larga' && kms > 0) msj += `🛣️ *Distancia:* ~${kms} km\n`;
-     msj += `📅 *Fecha Ideal:* ${fec}\n\n`;
-     
-     msj += `📍 *ORIGEN:* ${ori}\n🏢 *Acceso:* ${accOri}\n\n`;
-     msj += `🏁 *DESTINO:* ${des}\n🏢 *Acceso:* ${accDes}\n\n`;
-     
-     msj += `📦 *INVENTARIO DECLARADO:*\n`;
-     msj += invTextLines.length > 0 ? invTextLines.join('\n') : `▪️ Sin muebles detallados`;
-     msj += `\n\n`;
-     
-     if(totalM3 > 0) {
-       msj += `📊 *Volumen Estimado:* ${totalM3.toFixed(1)} m³\n`;
-       msj += `🚛 *Vehículo Sugerido:* ${vehiculoSugerido}\n\n`;
-     }
-     
-     if(ext) msj += `📝 *Detalles Adicionales:*\n"${ext}"\n\n`;
-     msj += `¡Quedo a la espera de la cotización!`;
-
-     setTimeout(() => {
-        const finalUrl = `https://wa.me/${oficialWhatsApp}?text=${encodeURIComponent(msj)}`;
-        window.location.href = finalUrl;
-     }, 500);
-   }
- </script>
 </body>
 </html>
