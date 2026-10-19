@@ -12,7 +12,6 @@
 
     :root {
       --primary-orange: #ea580c;
-      --primary-hover: #c2410c;
       --dark-gray: #111113;
       --light-gray: #f4f4f5;
       --white: #ffffff;
@@ -45,17 +44,14 @@
 
     .brand-header {
       text-align: center;
-      background: var(--dark-gray);
-      padding: 20px 15px;
-      border-radius: 12px;
-      border-bottom: 4px solid var(--primary-orange);
+      border-bottom: 3px solid var(--primary-orange);
+      padding-bottom: 10px;
       margin-bottom: 20px;
     }
 
     .brand-logo-svg {
       height: 50px;
       width: auto;
-      display: inline-block;
     }
 
     h3 {
@@ -90,7 +86,6 @@
     input:focus, select:focus, textarea:focus {
       outline: none;
       border-color: var(--primary-orange);
-      box-shadow: 0 0 0 2px rgba(234, 88, 12, 0.15);
     }
 
     .grid-2 {
@@ -169,7 +164,7 @@
     }
 
     button:hover {
-      opacity: 0.92;
+      opacity: 0.9;
       transform: translateY(-1px);
     }
 
@@ -179,8 +174,6 @@
 
     button.btn-success {
       background-color: #25D366;
-      font-size: 1.05rem;
-      padding: 16px;
     }
 
     #map {
@@ -190,39 +183,6 @@
       border: 1px solid var(--border-color);
       margin-top: 10px;
       z-index: 1;
-    }
-
-    .dest-item {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-      margin-top: 6px;
-    }
-
-    /* MÓDULO MARINA IA OPCIONAL */
-    .marina-box {
-      background: #fff7ed;
-      border: 2px dashed #ea580c;
-      border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 16px;
-    }
-
-    .marina-title {
-      font-size: 0.95rem;
-      font-weight: 800;
-      color: #ea580c;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 4px;
-    }
-
-    .marina-desc {
-      font-size: 0.8rem;
-      color: #52525b;
-      margin-bottom: 8px;
-      line-height: 1.35;
     }
 
     .inventory-section {
@@ -240,9 +200,6 @@
       border-bottom: 2px solid var(--primary-orange);
       padding-bottom: 4px;
       margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
     }
 
     .inv-item {
@@ -280,13 +237,29 @@
       font-size: 0.8rem;
     }
 
-    .footer-note {
-      text-align: center;
-      font-size: 0.78rem;
-      color: #71717a;
-      margin-top: 15px;
-      border-top: 1px solid var(--border-color);
-      padding-top: 10px;
+    .marina-box {
+      background: #fff7ed;
+      border: 2px dashed #ea580c;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 16px;
+    }
+
+    .marina-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #ea580c;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .marina-desc {
+      font-size: 0.8rem;
+      color: #52525b;
+      margin-bottom: 8px;
+      line-height: 1.35;
     }
   </style>
 </head>
@@ -313,7 +286,7 @@
 
       <div class="radio-group">
         <div class="radio-btn active" id="btn-tipo-local" onclick="seleccionarTipo('Mudanza Local')">
-          <i class="fas fa-city"></i><br>LOCAL<br><small>(dentro de 50km)</small>
+          <i class="fas fa-city"></i><br>LOCAL<br><small>(dentro radio de 50km)</small>
         </div>
         <div class="radio-btn" id="btn-tipo-larga" onclick="seleccionarTipo('Mudanza Larga')">
           <i class="fas fa-route"></i><br>LARGA DISTANCIA<br><small>(mayor a 50km)</small>
@@ -344,11 +317,11 @@
       <label for="fecha">Fecha Estimativa (*)</label>
       <input type="date" id="fecha" required>
 
-      <label for="origen">Dirección de Origen (*)</label>
+      <label for="origen">Dirección de Origen (*) (Ej: Rómulo Carbia 3381, Córdoba)</label>
       <input type="text" id="origen" placeholder="Ej: Rómulo Carbia 3381, Córdoba" required>
 
       <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
-        <label style="margin-top:0;">Dirección(es) de Destino (*)</label>
+        <label style="margin-top:0;">Dirección(es) de Destino (*) (Ej: San Martín 150, Mendoza)</label>
         <button type="button" class="btn-secondary" style="padding:4px 8px; font-size:0.75rem; width:auto;" onclick="agregarDestinoIntermedio()">
           <i class="fas fa-plus"></i> Añadir Parada
         </button>
@@ -401,33 +374,32 @@
         <div class="inventory-title"><i class="fas fa-couch"></i> Living y Comedor</div>
         
         <div class="inv-item">
-          <span>Sofá Principal:</span>
+          <span>Sofá principal:</span>
           <div class="inv-controls">
             <select id="inv-sofa">
               <option value="No">No</option>
               <option value="2 Cuerpos">2 Cuerpos</option>
               <option value="3 Cuerpos">3 Cuerpos</option>
-              <option value="Esquinero / L">Esquinero / L</option>
             </select>
           </div>
         </div>
 
         <div class="inv-item">
-          <span>Mesa Ratonera:</span>
+          <span>Mesa ratonera:</span>
           <div class="inv-controls">
             <input type="number" id="inv-mesaratonera" value="0" min="0">
           </div>
         </div>
 
         <div class="inv-item">
-          <span>Mesa de Comedor:</span>
+          <span>Mesa de comedor:</span>
           <div class="inv-controls">
             <input type="number" id="inv-mesacomedor" value="0" min="0">
           </div>
         </div>
 
         <div class="inv-item">
-          <span>Sillas (Cantidad):</span>
+          <span>Sillas:</span>
           <div class="inv-controls">
             <input type="number" id="inv-sillas" value="0" min="0">
           </div>
@@ -447,7 +419,7 @@
           </div>
         </div>
 
-        <label for="detalles-living">Más detalles (Living / Comedor):</label>
+        <label for="detalles-living">Más Detalles (Living / Comedor):</label>
         <textarea id="detalles-living" placeholder="Ej: Sillón individual extra, cuadros, lámpara de pie..."></textarea>
       </div>
 
@@ -456,41 +428,34 @@
         <div class="inventory-title"><i class="fas fa-bed"></i> Dormitorios</div>
         
         <div class="inv-item">
-          <span>Cama / Colchón 1 Plaza:</span>
+          <span>Cama con colchón (Cantidad):</span>
           <div class="inv-controls">
-            <input type="number" id="inv-cama1p" value="0" min="0">
+            <input type="number" id="inv-camacant" value="0" min="0">
           </div>
         </div>
 
         <div class="inv-item">
-          <span>Cama / Colchón 2 Plazas / King:</span>
-          <div class="inv-controls">
-            <input type="number" id="inv-cama2p" value="0" min="0">
-          </div>
-        </div>
-
-        <div class="inv-item">
-          <span>Mesas de Luz:</span>
+          <span>Mesas de luz:</span>
           <div class="inv-controls">
             <input type="number" id="inv-mesasluz" value="0" min="0">
           </div>
         </div>
 
         <div class="inv-item">
-          <span>Cómoda / Cajonera:</span>
+          <span>Cómoda o cajonera:</span>
           <div class="inv-controls">
             <input type="number" id="inv-comoda" value="0" min="0">
           </div>
         </div>
 
         <div class="inv-item">
-          <span>Ropero / Placard (Desarmado):</span>
+          <span>Ropero desarmado:</span>
           <div class="inv-controls">
             <input type="number" id="inv-ropero" value="0" min="0">
           </div>
         </div>
 
-        <label for="detalles-dormitorio">Más detalles (Dormitorios):</label>
+        <label for="detalles-dormitorio">Más Detalles (Dormitorios):</label>
         <textarea id="detalles-dormitorio" placeholder="Ej: Espejo de cuerpo entero, repisas, respaldos de cama..."></textarea>
       </div>
 
@@ -506,36 +471,43 @@
         </div>
 
         <div class="inv-item">
-          <span>Freezer Cava:</span>
+          <span>Freezer:</span>
           <div class="inv-controls">
             <input type="number" id="inv-freezer" value="0" min="0">
           </div>
         </div>
 
         <div class="inv-item">
-          <span>Cocina / Anafe:</span>
+          <span>Cocina / Anafes:</span>
           <div class="inv-controls">
             <input type="number" id="inv-cocina" value="0" min="0">
           </div>
         </div>
 
         <div class="inv-item">
-          <span>Lavarropas / Secarropas:</span>
+          <span>Lavarropas:</span>
           <div class="inv-controls">
             <input type="number" id="inv-lavarropas" value="0" min="0">
           </div>
         </div>
 
-        <label for="detalles-cocina">Más detalles (Cocina / Lavadero):</label>
-        <textarea id="detalles-cocina" placeholder="Ej: Microondas, lavavajillas, garrafa, mueble bajo mesada..."></textarea>
+        <label for="detalles-cocina">Más Detalles (Cocina / Lavadero):</label>
+        <textarea id="detalles-cocina" placeholder="Ej: Microondas, lavavajillas, garrafa..."></textarea>
       </div>
 
       <!-- SECCIÓN: BAÑO Y VARIOS -->
       <div class="inventory-section">
-        <div class="inventory-title"><i class="fas fa-boxes"></i> Varios y Cajas</div>
+        <div class="inventory-title"><i class="fas fa-boxes"></i> Baño y Varios</div>
         
         <div class="inv-item">
-          <span>Cajas de Cartón (Estimado):</span>
+          <span>Espejo grande:</span>
+          <div class="inv-controls">
+            <input type="number" id="inv-espejo" value="0" min="0">
+          </div>
+        </div>
+
+        <div class="inv-item">
+          <span>Cajas de cartón:</span>
           <div class="inv-controls">
             <input type="number" id="inv-cajas" value="0" min="0">
           </div>
@@ -548,27 +520,16 @@
           </div>
         </div>
 
-        <div class="inv-item">
-          <span>Bicicleta / Gimnasia:</span>
-          <div class="inv-controls">
-            <input type="number" id="inv-bici" value="0" min="0">
-          </div>
-        </div>
-
-        <label for="detalles-varios">Resultado de Marina IA / Observaciones Adicionales:</label>
-        <textarea id="detalles-varios" placeholder="Si escaneás con Marina IA, aquí se volcará el análisis técnico. También podés agregar cualquier otra indicación o piso/escalera."></textarea>
+        <label for="detalles-varios">Más Detalles (Varios / Marina IA):</label>
+        <textarea id="detalles-varios" placeholder="Si usás el escáner de Marina IA, el resultado se volcará aquí. También podés escribir aclaraciones adicionales sobre accesos, pisos o escaleras."></textarea>
       </div>
 
       <div class="btn-group">
         <button type="button" class="btn-secondary" onclick="irAlPaso(2)"><i class="fas fa-arrow-left"></i> Volver</button>
         <button type="submit" class="btn-success" id="btn-enviar">
-          <i class="fab fa-whatsapp"></i> Solicitar Cotización
+          <i class="fab fa-whatsapp"></i> PRESUPUESTAR
         </button>
       </div>
-    </div>
-
-    <div class="footer-note">
-      🚚 NIVEL 9 — Logística & Transportes de Excelencia
     </div>
 
   </form>
@@ -578,7 +539,7 @@
 <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 
 <script>
-  // URL DE BACKEND GOOGLE APPS SCRIPT
+  // URL BACKEND GOOGLE APPS SCRIPT
   const webAppUrl = 'https://script.google.com/macros/s/AKfycbysV_6TYOOK7Q_l6TYUErSdPeOGOyvhWIpQHQJ0c4GG5CzMPf3Ux7mz8VX4M_iRraYv/exec';
 
   let map = null;
@@ -589,7 +550,7 @@
     document.getElementById('fecha').value = todayStr;
   });
 
-  // NAVEGACIÓN ENTRE PASOS
+  // PASOS DEL FORMULARIO
   function irAlPaso(pasoNum) {
     document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
     document.getElementById('step' + pasoNum).classList.add('active');
@@ -616,7 +577,7 @@
     container.appendChild(input);
   }
 
-  // MAPA LEAFLET Y DISTANCIA
+  // MAPA LEAFLET
   function initMapaLeaflet() {
     if (!map) {
       map = L.map('map').setView([-31.4135, -64.1810], 11);
@@ -642,7 +603,7 @@
       for (let p of puntosBusqueda) {
         const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&countrycodes=ar&q=${encodeURIComponent(p)}`).then(r => r.json());
         if (!res || res.length === 0) {
-          alert(`No se encontró la dirección: "${p}". Revisa el nombre o ciudad.`);
+          alert(`No se encontró la dirección: "${p}".`);
           return;
         }
         waypoints.push(L.latLng(res[0].lat, res[0].lon));
@@ -663,11 +624,11 @@
       });
 
     } catch (err) {
-      alert("Error al trazar la ruta. Verifique las direcciones ingresadas.");
+      alert("Error al trazar la ruta. Verifique las direcciones.");
     }
   }
 
-  // ESCÁNER DE FOTOS / VIDEO CON MARINA IA
+  // ESCÁNER MARINA IA
   async function procesarFotosMarinaIA() {
     const input = document.getElementById('marina-archivos');
     const btn = document.getElementById('btn-marina');
@@ -712,9 +673,9 @@
 
         statusBox.textContent = "✅ ¡Inventario y volumetría calculados por Marina IA!";
         statusBox.style.display = 'block';
-        alert("✅ Marina IA ha volcado el análisis del inventario en las observaciones.");
+        alert("✅ Marina IA ha volcado el análisis del inventario en el formulario.");
       } else {
-        alert("No se pudo interpretar el archivo. Complete el inventario en los desplegables.");
+        alert("No se pudo interpretar el archivo. Complete el inventario manualmente.");
       }
     } catch (e) {
       alert("Error de conexión con Marina IA: " + e.message);
@@ -733,39 +694,37 @@
     });
   }
 
-  // COMPILACIÓN COMPLETA DE INVENTARIO
+  // COMPILAR INVENTARIO COMPLETO
   function compilarInventarioCompleto() {
     let lineas = [];
 
     // Living
     const sofa = document.getElementById('inv-sofa').value;
-    if (sofa !== 'No') lineas.push(`• Sofá: ${sofa}`);
+    if (sofa !== 'No') lineas.push(`• Sofá principal: ${sofa}`);
     const mesaratonera = document.getElementById('inv-mesaratonera').value;
-    if (parseInt(mesaratonera) > 0) lineas.push(`• Mesa Ratonera: ${mesaratonera}`);
+    if (parseInt(mesaratonera) > 0) lineas.push(`• Mesa ratonera: ${mesaratonera}`);
     const mesacomedor = document.getElementById('inv-mesacomedor').value;
-    if (parseInt(mesacomedor) > 0) lineas.push(`• Mesa Comedor: ${mesacomedor}`);
+    if (parseInt(mesacomedor) > 0) lineas.push(`• Mesa de comedor: ${mesacomedor}`);
     const sillas = document.getElementById('inv-sillas').value;
     if (parseInt(sillas) > 0) lineas.push(`• Sillas: ${sillas}`);
     const racktv = document.getElementById('inv-racktv').value;
-    if (parseInt(racktv) > 0) lineas.push(`• Rack TV: ${racktv}`);
+    if (parseInt(racktv) > 0) lineas.push(`• Mueble TV / Rack: ${racktv}`);
     const tv = document.getElementById('inv-tv').value;
-    if (parseInt(tv) > 0) lineas.push(`• Televisores: ${tv}`);
+    if (parseInt(tv) > 0) lineas.push(`• Televisor: ${tv}`);
     const detLiving = document.getElementById('detalles-living').value.trim();
-    if (detLiving) lineas.push(`  Details Living: ${detLiving}`);
+    if (detLiving) lineas.push(`  Más Detalles Living: ${detLiving}`);
 
     // Dormitorios
-    const cama1p = document.getElementById('inv-cama1p').value;
-    if (parseInt(cama1p) > 0) lineas.push(`• Cama 1 Plaza: ${cama1p}`);
-    const cama2p = document.getElementById('inv-cama2p').value;
-    if (parseInt(cama2p) > 0) lineas.push(`• Cama 2 Plazas/King: ${cama2p}`);
+    const camacant = document.getElementById('inv-camacant').value;
+    if (parseInt(camacant) > 0) lineas.push(`• Cama con colchón: ${camacant}`);
     const mesasluz = document.getElementById('inv-mesasluz').value;
-    if (parseInt(mesasluz) > 0) lineas.push(`• Mesas de Luz: ${mesasluz}`);
+    if (parseInt(mesasluz) > 0) lineas.push(`• Mesas de luz: ${mesasluz}`);
     const comoda = document.getElementById('inv-comoda').value;
-    if (parseInt(comoda) > 0) lineas.push(`• Cómoda/Cajonera: ${comoda}`);
+    if (parseInt(comoda) > 0) lineas.push(`• Cómoda o cajonera: ${comoda}`);
     const ropero = document.getElementById('inv-ropero').value;
-    if (parseInt(ropero) > 0) lineas.push(`• Ropero Desarmado: ${ropero}`);
+    if (parseInt(ropero) > 0) lineas.push(`• Ropero desarmado: ${ropero}`);
     const detDorm = document.getElementById('detalles-dormitorio').value.trim();
-    if (detDorm) lineas.push(`  Details Dormitorio: ${detDorm}`);
+    if (detDorm) lineas.push(`  Más Detalles Dormitorios: ${detDorm}`);
 
     // Cocina
     const heladera = document.getElementById('inv-heladera').value;
@@ -773,26 +732,26 @@
     const freezer = document.getElementById('inv-freezer').value;
     if (parseInt(freezer) > 0) lineas.push(`• Freezer: ${freezer}`);
     const cocina = document.getElementById('inv-cocina').value;
-    if (parseInt(cocina) > 0) lineas.push(`• Cocina/Anafe: ${cocina}`);
+    if (parseInt(cocina) > 0) lineas.push(`• Cocina / Anafes: ${cocina}`);
     const lavarropas = document.getElementById('inv-lavarropas').value;
     if (parseInt(lavarropas) > 0) lineas.push(`• Lavarropas: ${lavarropas}`);
     const detCocina = document.getElementById('detalles-cocina').value.trim();
-    if (detCocina) lineas.push(`  Details Cocina: ${detCocina}`);
+    if (detCocina) lineas.push(`  Más Detalles Cocina: ${detCocina}`);
 
     // Varios
+    const espejo = document.getElementById('inv-espejo').value;
+    if (parseInt(espejo) > 0) lineas.push(`• Espejo grande: ${espejo}`);
     const cajas = document.getElementById('inv-cajas').value;
-    if (parseInt(cajas) > 0) lineas.push(`• Cajas de Cartón: ${cajas}`);
+    if (parseInt(cajas) > 0) lineas.push(`• Cajas de cartón: ${cajas}`);
     const bolsos = document.getElementById('inv-bolsos').value;
-    if (parseInt(bolsos) > 0) lineas.push(`• Bolsos/Valijas: ${bolsos}`);
-    const bici = document.getElementById('inv-bici').value;
-    if (parseInt(bici) > 0) lineas.push(`• Bicicleta/Gimnasio: ${bici}`);
+    if (parseInt(bolsos) > 0) lineas.push(`• Bolsos y Valijas: ${bolsos}`);
     const detVarios = document.getElementById('detalles-varios').value.trim();
-    if (detVarios) lineas.push(`\n📝 OBSERVACIONES Y MARINA IA:\n${detVarios}`);
+    if (detVarios) lineas.push(`\n📝 MÁS DETALLES Y MARINA IA:\n${detVarios}`);
 
     return lineas.length > 0 ? lineas.join('\n') : "Inventario general de traslado.";
   }
 
-  // ENVÍO DE AUTOCOTIZACIÓN (POST AL SERVIDOR + REDIRECCIÓN WHATSAPP)
+  // ENVÍO FINAL POR WHATSAPP Y PERSISTENCIA
   async function enviarSolicitud(e) {
     e.preventDefault();
 
@@ -834,7 +793,7 @@
       total: 0
     };
 
-    // Envío silencioso a Apps Script (Persistencia en Google Sheets)
+    // Envío en segundo plano al servidor Google Apps Script
     try {
       await fetch(webAppUrl, {
         method: 'POST',
@@ -845,7 +804,7 @@
       console.log("Guardado local/servidor:", err);
     }
 
-    // Formato de Mensaje Oficial para WhatsApp
+    // Mensaje formateado a tu número de WhatsApp oficial de Nivel 9 (3517046541)
     const mensajeWA = `🚚 *NUEVA AUTOCOTIZACIÓN - NIVEL 9*
 👤 *Cliente:* ${cliente}
 📱 *Teléfono:* ${telefono}
@@ -859,7 +818,7 @@
 📦 *INVENTARIO Y DETALLES DE CARGA:*
 ${inventarioTexto}`;
 
-    const urlWA = `https://wa.me/5493512469122?text=${encodeURIComponent(mensajeWA)}`;
+    const urlWA = `https://wa.me/5493517046541?text=${encodeURIComponent(mensajeWA)}`;
     window.location.href = urlWA;
   }
 </script>
