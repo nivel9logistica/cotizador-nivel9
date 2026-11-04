@@ -1,21 +1,31 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes">
-  <title>Cotizador de Servicios - Nivel 9</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap');
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cotizador Online | Nivel 9 Logística de Excelencia</title>
+  
+  <!-- Tipografía Outfit & Iconografía FontAwesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  
+  <!-- SDK Oficial de Supabase v2 -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+  <style>
     :root {
-      --primary-orange: #ea580c;
-      --dark-gray: #111113;
-      --light-gray: #f4f4f5;
-      --white: #ffffff;
-      --border-color: #d4d4d8;
+      --bg-dark: #09090b;
+      --card-bg: #18181b;
+      --card-border: #27272a;
+      --brand: #ea580c;
+      --brand-hover: #f97316;
+      --brand-glow: rgba(234, 88, 12, 0.2);
+      --text-white: #ffffff;
+      --text-muted: #a1a1aa;
+      --text-dim: #71717a;
+      --success: #10b981;
     }
 
     * {
@@ -26,802 +36,968 @@
     }
 
     body {
-      background-color: var(--light-gray);
-      color: var(--dark-gray);
-      padding: 12px;
-      min-height: 100vh;
+      background-color: var(--bg-dark);
+      color: var(--text-white);
+      line-height: 1.5;
+      padding: 20px 12px 60px;
     }
 
     .container {
-      max-width: 650px;
+      max-width: 900px;
       margin: 0 auto;
-      background: var(--white);
-      padding: 20px;
-      border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-      border: 1px solid var(--border-color);
     }
 
-    .brand-header {
+    /* CABECERA CORPORATIVA Y LOGO CORREGIDO */
+    .header-box {
       text-align: center;
-      border-bottom: 3px solid var(--primary-orange);
-      padding-bottom: 10px;
-      margin-bottom: 20px;
+      margin-bottom: 28px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--card-border);
     }
 
     .brand-logo-svg {
-      height: 50px;
+      height: 52px;
       width: auto;
-    }
-
-    h3 {
-      color: var(--primary-orange);
-      margin-top: 15px;
-      margin-bottom: 10px;
-      font-size: 1.1rem;
-      text-transform: uppercase;
-      border-left: 4px solid var(--primary-orange);
-      padding-left: 8px;
-    }
-
-    label {
-      font-weight: 700;
+      margin: 0 auto 10px;
       display: block;
-      margin-top: 10px;
-      font-size: 0.85rem;
-      color: #3f3f46;
+    }
+
+    .badge-sub {
+      display: inline-block;
+      background: rgba(234, 88, 12, 0.12);
+      border: 1px solid var(--brand);
+      color: var(--brand);
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 1px;
       text-transform: uppercase;
+      margin-bottom: 8px;
     }
 
-    input[type="text"], input[type="number"], input[type="date"], input[type="tel"], select, textarea {
-      width: 100%;
-      padding: 10px;
-      margin-top: 4px;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
+    .header-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-white);
+    }
+
+    .header-desc {
       font-size: 0.9rem;
-      font-family: inherit;
+      color: var(--text-muted);
+      margin-top: 4px;
     }
 
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: var(--primary-orange);
+    /* TARJETAS DE SECCIÓN */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 22px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
     }
 
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-white);
+      display: flex;
+      align-items: center;
       gap: 10px;
+      margin-bottom: 18px;
+      border-left: 4px solid var(--brand);
+      padding-left: 12px;
     }
 
-    @media (max-width: 500px) {
-      .grid-2 {
-        grid-template-columns: 1fr;
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    @media (min-width: 640px) {
+      .form-grid.two-cols {
+        grid-template-columns: 1fr 1fr;
       }
     }
 
-    .radio-group {
+    .form-group {
       display: flex;
-      gap: 10px;
-      margin-top: 10px;
+      flex-direction: column;
+      gap: 6px;
     }
 
-    .radio-btn {
-      flex: 1;
-      padding: 15px 10px;
-      text-align: center;
-      background: var(--light-gray);
-      border: 2px solid var(--border-color);
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: 700;
-      transition: 0.2s;
-      font-size: 0.9rem;
-    }
-
-    .radio-btn.active {
-      background: var(--primary-orange);
-      color: var(--white);
-      border-color: var(--primary-orange);
-    }
-
-    .step {
-      display: none;
-    }
-
-    .step.active {
-      display: block;
-      animation: fadeIn 0.3s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .btn-group {
-      display: flex;
-      gap: 10px;
-      margin-top: 25px;
-    }
-
-    button {
-      background-color: var(--primary-orange);
-      color: white;
-      padding: 14px;
-      border: none;
-      width: 100%;
-      font-size: 0.95rem;
-      font-weight: 700;
-      border-radius: 8px;
-      cursor: pointer;
+    label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
       text-transform: uppercase;
-      transition: 0.2s;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
+      letter-spacing: 0.5px;
     }
 
-    button:hover {
-      opacity: 0.9;
-      transform: translateY(-1px);
-    }
-
-    button.btn-secondary {
-      background-color: var(--dark-gray);
-    }
-
-    button.btn-success {
-      background-color: #25D366;
-    }
-
-    #map {
-      width: 100%;
-      height: 280px;
-      border-radius: 10px;
-      border: 1px solid var(--border-color);
-      margin-top: 10px;
-      z-index: 1;
-    }
-
-    .inventory-section {
-      background: #fafafa;
-      border: 1px solid #e4e4e7;
-      border-radius: 10px;
-      padding: 12px;
-      margin-bottom: 12px;
-    }
-
-    .inventory-title {
+    input, select, textarea {
+      background: #111113;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      color: #fff;
+      padding: 12px 14px;
       font-size: 0.95rem;
-      font-weight: 800;
-      color: var(--dark-gray);
-      border-bottom: 2px solid var(--primary-orange);
-      padding-bottom: 4px;
-      margin-bottom: 8px;
+      outline: none;
+      transition: all 0.2s ease;
     }
 
-    .inv-item {
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px var(--brand-glow);
+    }
+
+    /* CATEGORÍAS DEL INVENTARIO */
+    .cat-tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+      margin-bottom: 16px;
+      scrollbar-width: thin;
+    }
+
+    .cat-btn {
+      background: #111113;
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .cat-btn.active, .cat-btn:hover {
+      background: var(--brand);
+      color: #fff;
+      border-color: var(--brand);
+    }
+
+    /* GRID DE ITEMS */
+    .inventory-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    @media (min-width: 768px) {
+      .inventory-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .item-card {
+      background: #111113;
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 14px;
+      transition: all 0.25s ease;
+    }
+
+    .item-card.has-qty {
+      border-color: var(--brand);
+      background: #191412;
+      box-shadow: 0 4px 15px rgba(234, 88, 12, 0.15);
+    }
+
+    .item-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 6px 0;
-      border-bottom: 1px dashed #e4e4e7;
-      font-size: 0.88rem;
-      flex-wrap: wrap;
-      gap: 6px;
     }
 
-    .inv-item:last-child {
-      border-bottom: none;
+    .item-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
-    .inv-controls {
+    .item-icon {
+      width: 36px;
+      height: 36px;
+      background: #27272a;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--brand);
+      font-size: 1rem;
+    }
+
+    .item-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .item-counter {
       display: flex;
       align-items: center;
       gap: 8px;
+      background: #27272a;
+      border-radius: 20px;
+      padding: 3px 6px;
     }
 
-    .inv-controls input[type="number"] {
-      width: 65px;
-      text-align: center;
-      padding: 4px;
-      margin-top: 0;
-    }
-
-    .inv-controls select {
-      padding: 4px;
-      margin-top: 0;
-      width: auto;
-      font-size: 0.8rem;
-    }
-
-    .marina-box {
-      background: #fff7ed;
-      border: 2px dashed #ea580c;
-      border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 16px;
-    }
-
-    .marina-title {
-      font-size: 0.95rem;
+    .btn-step {
+      width: 28px;
+      height: 28px;
+      background: #3f3f46;
+      border: none;
+      color: #fff;
+      border-radius: 50%;
+      cursor: pointer;
       font-weight: 800;
-      color: #ea580c;
       display: flex;
       align-items: center;
-      gap: 6px;
-      margin-bottom: 4px;
+      justify-content: center;
+      transition: background 0.15s;
     }
 
-    .marina-desc {
-      font-size: 0.8rem;
-      color: #52525b;
+    .btn-step:hover {
+      background: var(--brand);
+    }
+
+    .qty-display {
+      font-size: 1rem;
+      font-weight: 800;
+      min-width: 24px;
+      text-align: center;
+      color: #fff;
+    }
+
+    /* SUBPANEL DE ESPECIFICACIONES DESPLEGABLE */
+    .item-subpanel {
+      display: none;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed #3f3f46;
+      animation: fadeIn 0.25s ease-in-out;
+    }
+
+    .item-card.has-qty .item-subpanel {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .subpanel-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--brand);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .chip-group {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
       margin-bottom: 8px;
-      line-height: 1.35;
+    }
+
+    .chip {
+      background: #27272a;
+      border: 1px solid #3f3f46;
+      color: #d4d4d8;
+      font-size: 0.78rem;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.15s;
+    }
+
+    .chip.selected {
+      background: var(--brand);
+      border-color: var(--brand);
+      color: #fff;
+    }
+
+    .checkbox-extra {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.8rem;
+      color: #e4e4e7;
+      margin-top: 4px;
+      cursor: pointer;
+    }
+
+    .checkbox-extra input {
+      accent-color: var(--brand);
+      width: 15px;
+      height: 15px;
+      cursor: pointer;
+    }
+
+    /* BARRA FLOTANTE DE TOTALES */
+    .summary-bar {
+      position: sticky;
+      bottom: 12px;
+      z-index: 99;
+      background: rgba(24, 24, 27, 0.95);
+      border: 1px solid var(--brand);
+      backdrop-filter: blur(10px);
+      border-radius: 14px;
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+      margin-top: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .summary-stats {
+      display: flex;
+      gap: 20px;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .stat-val {
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: #fff;
+    }
+
+    .btn-submit {
+      background: var(--brand);
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s;
+      box-shadow: 0 4px 15px var(--brand-glow);
+    }
+
+    .btn-submit:hover {
+      background: var(--brand-hover);
+      transform: translateY(-2px);
+    }
+
+    .status-msg {
+      font-size: 0.85rem;
+      text-align: center;
+      margin-top: 10px;
+      font-weight: 600;
+      display: none;
     }
   </style>
 </head>
 <body>
 
-<div class="container">
-  
-  <!-- LOGO E INSTITUCIONAL -->
-  <div class="brand-header">
-    <svg class="brand-logo-svg" viewBox="0 0 500 120">
-      <text x="10" y="70" font-family="'Outfit', sans-serif" font-weight="800" font-size="70" fill="#ffffff">NIVEL</text>
-      <text x="210" y="70" font-family="'Outfit', sans-serif" font-weight="800" font-size="75" fill="#ea580c">9</text>
-      <rect x="10" y="85" width="260" height="4" fill="#ea580c" />
-      <text x="10" y="105" font-family="'Outfit', sans-serif" font-weight="600" font-size="14" fill="#a1a1aa" letter-spacing="4">LOGISTICA DE EXCELENCIA</text>
-    </svg>
+  <div class="container">
+    <!-- ENCABEZADO CON LOGO VECTORIAL IDENTIDAD NIVEL 9 -->
+    <div class="header-box">
+      <div class="badge-sub">Herramienta Oficial de Cotización</div>
+      
+      <!-- LOGO VECTORIAL: NIVEL (BLANCO) + 9 (NARANJA) -->
+      <svg class="brand-logo-svg" viewBox="0 0 280 115">
+        <text x="140" y="72" text-anchor="middle" font-family="'Outfit', sans-serif" font-weight="800" font-size="70">
+          <tspan fill="#ffffff">NIVEL</tspan>
+          <tspan fill="#ea580c">9</tspan>
+        </text>
+        <rect x="20" y="86" width="240" height="4.5" fill="#ea580c" rx="2.5" />
+        <text x="140" y="106" text-anchor="middle" font-family="'Outfit', sans-serif" font-weight="600" font-size="12" fill="#a1a1aa" letter-spacing="3.5">
+          LOGISTICA DE EXCELENCIA
+        </text>
+      </svg>
+      
+      <h1 class="header-title">Cotizador Online de Fletes y Mudanzas</h1>
+      <p class="header-desc">Selecciona tu inventario detallado para calcular el volumen exacto y la tarifa al instante.</p>
+    </div>
+
+    <!-- PASO 1: DATOS DE CONTACTO Y RUTA -->
+    <div class="card">
+      <div class="card-title"><i class="fas fa-map-marked-alt" style="color:var(--brand);"></i> 1. Datos del Traslado y Contacto</div>
+      <div class="form-grid two-cols">
+        <div class="form-group">
+          <label>Nombre y Apellido / Razón Social *</label>
+          <input type="text" id="cli_nombre" placeholder="Ej: Juan Pérez / Empresa SRL" required />
+        </div>
+        <div class="form-group">
+          <label>WhatsApp / Teléfono de Contacto *</label>
+          <input type="tel" id="cli_tel" placeholder="Ej: 3512345678 (Sin 0 ni 15)" required />
+        </div>
+        <div class="form-group">
+          <label>Dirección de Origen (Localidad y Calle) *</label>
+          <input type="text" id="cli_origen" placeholder="Ej: Córdoba Capital, B° Centro" required />
+        </div>
+        <div class="form-group">
+          <label>Dirección de Destino *</label>
+          <input type="text" id="cli_destino" placeholder="Ej: Villa Carlos Paz / Rosario" required />
+        </div>
+        <div class="form-group">
+          <label>Fecha Estimada del Servicio</label>
+          <input type="date" id="cli_fecha" />
+        </div>
+        <div class="form-group">
+          <label>Tipo de Inmueble / Accesos</label>
+          <select id="cli_accesos">
+            <option value="Planta Baja / Casa">Planta Baja / Casa</option>
+            <option value="Edificio por Ascensor">Edificio por Ascensor</option>
+            <option value="Edificio por Escalera">Edificio por Escalera</option>
+            <option value="Complejo Cerrado / Galpón">Complejo Cerrado / Galpón</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- PASO 2: INVENTARIO REACTIVO CON SUBPANELES -->
+    <div class="card">
+      <div class="card-title"><i class="fas fa-boxes" style="color:var(--brand);"></i> 2. Inventario Detallado de Bienes</div>
+      
+      <div class="cat-tabs" id="catTabs">
+        <button class="cat-btn active" onclick="filtrarCategoria('todos')"><i class="fas fa-th-large"></i> Todos</button>
+        <button class="cat-btn" onclick="filtrarCategoria('dormitorio')"><i class="fas fa-bed"></i> Dormitorio</button>
+        <button class="cat-btn" onclick="filtrarCategoria('living')"><i class="fas fa-couch"></i> Living</button>
+        <button class="cat-btn" onclick="filtrarCategoria('comedor')"><i class="fas fa-utensils"></i> Comedor & Cocina</button>
+        <button class="cat-btn" onclick="filtrarCategoria('electro')"><i class="fas fa-plug"></i> Electrodomésticos</button>
+        <button class="cat-btn" onclick="filtrarCategoria('oficina')"><i class="fas fa-laptop"></i> Oficina</button>
+        <button class="cat-btn" onclick="filtrarCategoria('bultos')"><i class="fas fa-box"></i> Cajas & Varios</button>
+      </div>
+
+      <div class="inventory-grid" id="inventoryGrid">
+        <!-- Renderizado dinámico vía JavaScript -->
+      </div>
+    </div>
+
+    <!-- PASO 3: OBSERVACIONES ADICIONALES -->
+    <div class="card">
+      <div class="card-title"><i class="fas fa-clipboard-list" style="color:var(--brand);"></i> 3. Observaciones / Comentarios</div>
+      <div class="form-group">
+        <label>Aclaraciones especiales (objetos delicados, desarme de muebles, etc.)</label>
+        <textarea id="cli_obs" rows="3" placeholder="Ej: Mesa de vidrio muy pesada, se necesita peón para subir por escalera..."></textarea>
+      </div>
+    </div>
+
+    <!-- BARRA FLOTANTE DE TOTALES Y ENVÍO -->
+    <div class="summary-bar">
+      <div class="summary-stats">
+        <div class="stat-item">
+          <span class="stat-label">Bultos / Muebles</span>
+          <span class="stat-val" id="totalItemsDisplay">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Volumen Est.</span>
+          <span class="stat-val" style="color:var(--brand);" id="totalM3Display">0.0 m³</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Unidad Sugerida</span>
+          <span class="stat-val" style="font-size:1rem; color:var(--success);" id="vehiculoSugeridoDisplay">A definir</span>
+        </div>
+      </div>
+      <button class="btn-submit" id="btnEnviar" onclick="enviarCotizacionFinal()">
+        <i class="fab fa-whatsapp" style="font-size:1.2rem;"></i> Cotizar y Enviar
+      </button>
+    </div>
+
+    <div class="status-msg" id="statusMsg"></div>
   </div>
 
-  <form id="cotizadorForm" onsubmit="enviarSolicitud(event)">
+  <script>
+    // =========================================================================
+    // CONFIGURACIÓN SUPABASE - CONEXIÓN CON TU ERP
+    // (Pega aquí la URL y la Anon Key de tu proyecto Supabase)
+    // =========================================================================
+    const SUPABASE_URL = 'https://TU_PROYECTO.supabase.co';
+    const SUPABASE_ANON_KEY = 'TU_ANON_KEY_PUBLICA';
+    const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
-    <!-- PASO 1: TIPO DE SERVICIO -->
-    <div class="step active" id="step1">
-      <h3>1. Tipo de Servicio</h3>
-      <p style="font-size: 0.85rem; color: #52525b;">Seleccione el alcance de su traslado:</p>
+    // WHATSAPP RECEPTOR DE NIVEL 9 (Córdoba)
+    const WA_DESTINO = '5493512233444'; // Modificar si tienes un número exclusivo de recepción
 
-      <div class="radio-group">
-        <div class="radio-btn active" id="btn-tipo-local" onclick="seleccionarTipo('Mudanza Local')">
-          <i class="fas fa-city"></i><br>LOCAL<br><small>(dentro radio de 50km)</small>
-        </div>
-        <div class="radio-btn" id="btn-tipo-larga" onclick="seleccionarTipo('Mudanza Larga')">
-          <i class="fas fa-route"></i><br>LARGA DISTANCIA<br><small>(mayor a 50km)</small>
-        </div>
-      </div>
-      <input type="hidden" id="tipomov" value="Mudanza Local">
+    // =========================================================================
+    // CATÁLOGO DE ITEMS CON VARIANTES LOGÍSTICAS
+    // =========================================================================
+    const catalogoItems = [
+      // DORMITORIO
+      {
+        id: 'cama',
+        nombre: 'Cama',
+        categoria: 'dormitorio',
+        icono: 'fa-bed',
+        m3: 1.5,
+        cantidad: 0,
+        variantes: ['1 Plaza', '1 Plaza y 1/2', '2 Plazas', 'Queen Size', 'King Size'],
+        varianteSelec: '2 Plazas',
+        extras: [{ id: 'sommier', label: 'Con Base Sommier', checked: true }]
+      },
+      {
+        id: 'ropero',
+        nombre: 'Placard / Ropero',
+        categoria: 'dormitorio',
+        icono: 'fa-door-closed',
+        m3: 2.2,
+        cantidad: 0,
+        variantes: ['2 Puertas', '3 Puertas', '4 Puertas o más', 'Vestidor modular'],
+        varianteSelec: '3 Puertas',
+        extras: [{ id: 'desarme', label: 'Requiere Desarme', checked: false }]
+      },
+      {
+        id: 'comoda',
+        nombre: 'Cómoda / Chifonier',
+        categoria: 'dormitorio',
+        icono: 'fa-archive',
+        m3: 0.9,
+        cantidad: 0,
+        variantes: ['Chica (3 cajones)', 'Mediana (4-5 cajones)', 'Grande'],
+        varianteSelec: 'Mediana (4-5 cajones)'
+      },
+      {
+        id: 'mesadeluz',
+        nombre: 'Mesa de Luz',
+        categoria: 'dormitorio',
+        icono: 'fa-cube',
+        m3: 0.25,
+        cantidad: 0,
+        variantes: ['1 Unidad', 'Juego de 2 unidades'],
+        varianteSelec: 'Juego de 2 unidades'
+      },
 
-      <div class="btn-group">
-        <button type="button" onclick="irAlPaso(2)">Continuar <i class="fas fa-arrow-right"></i></button>
-      </div>
-    </div>
+      // LIVING
+      {
+        id: 'sillon',
+        nombre: 'Sillón / Sofá',
+        categoria: 'living',
+        icono: 'fa-couch',
+        m3: 1.8,
+        cantidad: 0,
+        variantes: ['1 Cuerpo (Poltrona)', '2 Cuerpos', '3 Cuerpos', 'Tipo L (3+1)', 'Tipo L (3+2)', 'Tipo L (3+3)', 'Sofá Cama'],
+        varianteSelec: '2 Cuerpos'
+      },
+      {
+        id: 'racktv',
+        nombre: 'Rack TV / Modular',
+        categoria: 'living',
+        icono: 'fa-tv',
+        m3: 1.1,
+        cantidad: 0,
+        variantes: ['Chico (<1.20m)', 'Mediano (1.20m - 1.60m)', 'Modular grande de pared (>1.80m)'],
+        varianteSelec: 'Mediano (1.20m - 1.60m)'
+      },
+      {
+        id: 'mesaratona',
+        nombre: 'Mesa Ratona de Centro',
+        categoria: 'living',
+        icono: 'fa-table',
+        m3: 0.4,
+        cantidad: 0,
+        variantes: ['Madera', 'Con Tapa de Vidrio / Mármol'],
+        varianteSelec: 'Madera'
+      },
+      {
+        id: 'tv',
+        nombre: 'Televisor / Pantalla',
+        categoria: 'living',
+        icono: 'fa-desktop',
+        m3: 0.3,
+        cantidad: 0,
+        variantes: ['Hasta 43"', '50" a 65"', '70" o más'],
+        varianteSelec: '50" a 65"',
+        extras: [{ id: 'caja_orig', label: 'En Caja Original', checked: false }]
+      },
 
-    <!-- PASO 2: DATOS PERSONALES Y RUTA -->
-    <div class="step" id="step2">
-      <h3>2. Datos Personales y Ruta</h3>
+      // COMEDOR & COCINA
+      {
+        id: 'mesacomedor',
+        nombre: 'Mesa de Comedor',
+        categoria: 'comedor',
+        icono: 'fa-utensils',
+        m3: 1.6,
+        cantidad: 0,
+        variantes: ['Para 4 Sillas', 'Para 6 Sillas', 'Para 8 Sillas o más / Extensible'],
+        varianteSelec: 'Para 6 Sillas',
+        extras: [{ id: 'vidrio', label: 'Tapa de Vidrio Templado', checked: false }]
+      },
+      {
+        id: 'sillas',
+        nombre: 'Sillas de Comedor',
+        categoria: 'comedor',
+        icono: 'fa-chair',
+        m3: 0.2,
+        cantidad: 0,
+        variantes: ['Juego x 4', 'Juego x 6', 'Juego x 8', 'Banquetas de Barra'],
+        varianteSelec: 'Juego x 6'
+      },
+      {
+        id: 'vajillero',
+        nombre: 'Vajillero / Aparador',
+        categoria: 'comedor',
+        icono: 'fa-wine-glass',
+        m3: 1.4,
+        cantidad: 0,
+        variantes: ['Madera Ciega', 'Con Puertas/Estantes de Vidrio'],
+        varianteSelec: 'Madera Ciega'
+      },
 
-      <div class="grid-2">
-        <div>
-          <label for="cliente">Nombre Completo (*)</label>
-          <input type="text" id="cliente" placeholder="Ej: Juan Pérez" required>
-        </div>
-        <div>
-          <label for="telefono">Teléfono Celular (*)</label>
-          <input type="tel" id="telefono" placeholder="Ej: 3512469122" required>
-        </div>
-      </div>
+      // ELECTRODOMÉSTICOS
+      {
+        id: 'heladera',
+        nombre: 'Heladera / Freezer',
+        categoria: 'electro',
+        icono: 'fa-snowflake',
+        m3: 1.6,
+        cantidad: 0,
+        variantes: ['Bajo Mesada / Frigobar', '1 Puerta Estándar', 'Con Freezer (2 Puertas)', 'Side by Side (2 Puertas)', 'Freezer de Pozo'],
+        varianteSelec: 'Con Freezer (2 Puertas)'
+      },
+      {
+        id: 'lavarropas',
+        nombre: 'Lavarropas / Secarropas',
+        categoria: 'electro',
+        icono: 'fa-tint',
+        m3: 0.7,
+        cantidad: 0,
+        variantes: ['Carga Superior', 'Carga Frontal', 'Lavasecarropas'],
+        varianteSelec: 'Carga Frontal'
+      },
+      {
+        id: 'cocina',
+        nombre: 'Cocina / Horno',
+        categoria: 'electro',
+        icono: 'fa-fire',
+        m3: 0.6,
+        cantidad: 0,
+        variantes: ['Cocina 4 Hornallas', 'Industrial 6 Hornallas', 'Microondas / Horno de Mesa'],
+        varianteSelec: 'Cocina 4 Hornallas'
+      },
 
-      <label for="fecha">Fecha Estimativa (*)</label>
-      <input type="date" id="fecha" required>
+      // OFICINA & ESTUDIO
+      {
+        id: 'escritorio',
+        nombre: 'Escritorio',
+        categoria: 'oficina',
+        icono: 'fa-laptop',
+        m3: 0.8,
+        cantidad: 0,
+        variantes: ['Simple (<1.20m)', 'Con Cajonera', 'En L / Puesto Gerencial'],
+        varianteSelec: 'Con Cajonera'
+      },
+      {
+        id: 'sillaoficina',
+        nombre: 'Silla de Oficina',
+        categoria: 'oficina',
+        icono: 'fa-chair',
+        m3: 0.35,
+        cantidad: 0,
+        variantes: ['Operativa / Estándar', 'Sillón Gerencial con Ruedas'],
+        varianteSelec: 'Sillón Gerencial con Ruedas'
+      },
+      {
+        id: 'biblioteca',
+        nombre: 'Biblioteca / Estantería',
+        categoria: 'oficina',
+        icono: 'fa-book',
+        m3: 1.0,
+        cantidad: 0,
+        variantes: ['Metálica Desarmable', 'Madera Fija Pesada'],
+        varianteSelec: 'Metálica Desarmable'
+      },
 
-      <label for="origen">Dirección de Origen (*) (Ej: Rómulo Carbia 3381, Córdoba)</label>
-      <input type="text" id="origen" placeholder="Ej: Rómulo Carbia 3381, Córdoba" required>
-
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
-        <label style="margin-top:0;">Dirección(es) de Destino (*) (Ej: San Martín 150, Mendoza)</label>
-        <button type="button" class="btn-secondary" style="padding:4px 8px; font-size:0.75rem; width:auto;" onclick="agregarDestinoIntermedio()">
-          <i class="fas fa-plus"></i> Añadir Parada
-        </button>
-      </div>
-      <div id="destinosContainer">
-        <input type="text" class="destino-input" placeholder="Ej: San Martín 150, Carlos Paz" required>
-      </div>
-
-      <button type="button" class="btn-secondary" style="margin-top:12px;" onclick="calcularRutaMapa()">
-        <i class="fas fa-map-marked-alt"></i> Trazar Ruta en Mapa
-      </button>
-
-      <div id="map"></div>
-
-      <div style="margin-top:10px; font-weight:bold; font-size:0.9rem; color:#27272a;">
-        Distancia Calculada (Ida): <span id="distancia-texto" style="color:var(--primary-orange);">0 Km</span>
-        <input type="hidden" id="distancia" value="0">
-      </div>
-
-      <div class="btn-group">
-        <button type="button" class="btn-secondary" onclick="irAlPaso(1)"><i class="fas fa-arrow-left"></i> Volver</button>
-        <button type="button" onclick="irAlPaso(3)">Continuar <i class="fas fa-arrow-right"></i></button>
-      </div>
-    </div>
-
-    <!-- PASO 3: INVENTARIO DE BIENES -->
-    <div class="step" id="step3">
-      <h3>3. Inventario de Bienes</h3>
-      <p style="font-size:0.82rem; color:#52525b; margin-bottom:12px;">
-        "El mayor detalle que nos brindes va a lograr un presupuesto más certero."
-      </p>
-
-      <!-- MÓDULO OPCIONAL MARINA IA -->
-      <div class="marina-box">
-        <div class="marina-title">
-          <i class="fas fa-robot"></i> ¿Querés ahorrar tiempo? (Opción Marina IA)
-        </div>
-        <p class="marina-desc">
-          Podés seleccionar tus muebles ítem por ítem abajo, o subir fotos / video corto de tus ambientes. <strong>Marina analizará tus bienes y discriminará el inventario con cálculo de volumetría (m³) automáticamente.</strong>
-        </p>
-        <input type="file" id="marina-archivos" accept="image/*,video/*" multiple capture="environment">
-        <button type="button" id="btn-marina" style="margin-top:8px; background-color:#ea580c; font-size:0.85rem; padding:10px;" onclick="procesarFotosMarinaIA()">
-          <i class="fas fa-magic"></i> Escanear con Marina IA
-        </button>
-        <div id="marina-status" style="display:none; font-size:0.82rem; margin-top:6px; font-weight:bold; color:#15803d;"></div>
-      </div>
-
-      <!-- SECCIÓN: LIVING Y COMEDOR -->
-      <div class="inventory-section">
-        <div class="inventory-title"><i class="fas fa-couch"></i> Living y Comedor</div>
-        
-        <div class="inv-item">
-          <span>Sofá principal:</span>
-          <div class="inv-controls">
-            <select id="inv-sofa">
-              <option value="No">No</option>
-              <option value="2 Cuerpos">2 Cuerpos</option>
-              <option value="3 Cuerpos">3 Cuerpos</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="inv-item">
-          <span>Mesa ratonera:</span>
-          <div class="inv-controls">
-            <input type="number" id="inv-mesaratonera" value="0" min="0">
-          </div>
-        </div>
-
-        <div class="inv-item">
-          <span>Mesa de comedor:</span>
-          <div class="inv-controls">
-            <input type="number" id="inv-mesacomedor" value="0" min="0">
-          </div>
-        </div>
-
-        <div class="inv-item">
-          <span>Sillas:</span>
-          <div class="inv-controls">
-            <input type="number" id="inv-sillas" value="0" min="0">
-          </div>
-        </div>
-
-        <div class="inv-item">
-          <span>Mueble TV / Rack:</span>
-          <div class="inv-controls">
-            <input type="number" id="inv-racktv" value="0" min="0">
-          </div>
-        </div>
-
-        <div class="inv-item">
-          <span>Televisor:</span>
-          <div class="inv-controls">
-            <input type="number" id="inv-tv" value="0" min="0">
-          </div>
-        </div>
-
-        <label for="detalles-living">Más Detalles (Living / Comedor):</label>
-        <textarea id="detalles-living" placeholder="Ej: Sillón individual extra, cuadros, lámpara de pie..."></textarea>
-      </div>
-
-      <!-- SECCIÓN: DORMITORIOS -->
-      <div class="inventory-section">
-        <div class="inventory-title"><i class="fas fa-bed"></i> Dormitorios</div>
-        
-        <div class="inv-item">
-          <span>Cama con colchón (Cantidad):</span>
-          <div class="inv-controls">
-            <input type="number" id="inv-camacant" value="0" min="0">
-          </div>
-        </div>
-
-        <div class="inv-item">
-          <span>Mesas de luz:</span>
-          <div class="inv-controls">
-            <input type="number" id="inv-mesasluz" value="0" min="0">
-          </div>
-        </div>
-
-        <div class="inv-item">
-          <span>Cómoda o cajonera:</span>
-          <div class="inv-controls">
-            <input type="number" id="inv-comoda" value="0" min="0">
-          </div>
-        </div>
-
-        <div class="inv-item">
-          <span>Ropero desarmado:</span>
-          <div class="inv-controls">
-            <input type="number" id="inv-ropero" value="0" min="0">
-          </div>
-        </div>
-
-        <label for="detalles-dormitorio">Más Detalles (Dormitorios):</label>
-        <textarea id="detalles-dormitorio" placeholder="Ej: Espejo de cuerpo entero, repisas, respaldos de cama..."></textarea>
-      </div>
-
-      <!-- SECCIÓN: COCINA Y LAVADERO -->
-      <div class="inventory-section">
-        <div class="inventory-title"><i class="fas fa-dumpster-fire"></i> Cocina y Lavadero</div>
-        
-        <div class="inv-item">
-          <span>Heladera:</span>
-          <div class="inv-controls">
-            <input type="number" id="inv-heladera" value="0" min="0">
-          </div>
-        </div>
-
-        <div class="inv-item">
-          <span>Freezer:</span>
-          <div class="inv-controls">
-            <input type="number" id="inv-freezer" value="0" min="0">
-          </div>
-        </div>
-
-        <div class="inv-item">
-          <span>Cocina / Anafes:</span>
-          <div class="inv-controls">
-            <input type="number" id="inv-cocina" value="0" min="0">
-          </div>
-        </div>
-
-        <div class="inv-item">
-          <span>Lavarropas:</span>
-          <div class="inv-controls">
-            <input type="number" id="inv-lavarropas" value="0" min="0">
-          </div>
-        </div>
-
-        <label for="detalles-cocina">Más Detalles (Cocina / Lavadero):</label>
-        <textarea id="detalles-cocina" placeholder="Ej: Microondas, lavavajillas, garrafa..."></textarea>
-      </div>
-
-      <!-- SECCIÓN: BAÑO Y VARIOS -->
-      <div class="inventory-section">
-        <div class="inventory-title"><i class="fas fa-boxes"></i> Baño y Varios</div>
-        
-        <div class="inv-item">
-          <span>Espejo grande:</span>
-          <div class="inv-controls">
-            <input type="number" id="inv-espejo" value="0" min="0">
-          </div>
-        </div>
-
-        <div class="inv-item">
-          <span>Cajas de cartón:</span>
-          <div class="inv-controls">
-            <input type="number" id="inv-cajas" value="0" min="0">
-          </div>
-        </div>
-
-        <div class="inv-item">
-          <span>Bolsos y Valijas:</span>
-          <div class="inv-controls">
-            <input type="number" id="inv-bolsos" value="0" min="0">
-          </div>
-        </div>
-
-        <label for="detalles-varios">Más Detalles (Varios / Marina IA):</label>
-        <textarea id="detalles-varios" placeholder="Si usás el escáner de Marina IA, el resultado se volcará aquí. También podés escribir aclaraciones adicionales sobre accesos, pisos o escaleras."></textarea>
-      </div>
-
-      <div class="btn-group">
-        <button type="button" class="btn-secondary" onclick="irAlPaso(2)"><i class="fas fa-arrow-left"></i> Volver</button>
-        <button type="submit" class="btn-success" id="btn-enviar">
-          <i class="fab fa-whatsapp"></i> PRESUPUESTAR
-        </button>
-      </div>
-    </div>
-
-  </form>
-</div>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
-
-<script>
-  // URL BACKEND GOOGLE APPS SCRIPT
-  const webAppUrl = 'https://script.google.com/macros/s/AKfycbysV_6TYOOK7Q_l6TYUErSdPeOGOyvhWIpQHQJ0c4GG5CzMPf3Ux7mz8VX4M_iRraYv/exec';
-
-  let map = null;
-  let routingControl = null;
-
-  document.addEventListener('DOMContentLoaded', () => {
-    const todayStr = new Date().toISOString().split('T')[0];
-    document.getElementById('fecha').value = todayStr;
-  });
-
-  // PASOS DEL FORMULARIO
-  function irAlPaso(pasoNum) {
-    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-    document.getElementById('step' + pasoNum).classList.add('active');
-    
-    if (pasoNum === 2) {
-      setTimeout(() => { initMapaLeaflet(); }, 200);
-    }
-  }
-
-  function seleccionarTipo(tipo) {
-    document.getElementById('tipomov').value = tipo;
-    document.getElementById('btn-tipo-local').classList.toggle('active', tipo === 'Mudanza Local');
-    document.getElementById('btn-tipo-larga').classList.toggle('active', tipo === 'Mudanza Larga');
-  }
-
-  function agregarDestinoIntermedio() {
-    const container = document.getElementById('destinosContainer');
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.className = 'destino-input';
-    input.placeholder = 'Ej: Av. Colón 2000, Córdoba';
-    input.style.marginTop = '6px';
-    input.required = true;
-    container.appendChild(input);
-  }
-
-  // MAPA LEAFLET
-  function initMapaLeaflet() {
-    if (!map) {
-      map = L.map('map').setView([-31.4135, -64.1810], 11);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-    }
-    setTimeout(() => { map.invalidateSize(); }, 150);
-  }
-
-  async function calcularRutaMapa() {
-    const orig = document.getElementById('origen').value.trim();
-    const destInputs = document.querySelectorAll('.destino-input');
-    const dests = Array.from(destInputs).map(i => i.value.trim()).filter(v => v !== '');
-
-    if (!orig || dests.length === 0) {
-      alert("Por favor complete Origen y Destino para trazar la ruta.");
-      return;
-    }
-
-    const puntosBusqueda = [orig, ...dests].map(p => p.toLowerCase().includes('argentina') ? p : p + ', Argentina');
-
-    try {
-      const waypoints = [];
-      for (let p of puntosBusqueda) {
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&countrycodes=ar&q=${encodeURIComponent(p)}`).then(r => r.json());
-        if (!res || res.length === 0) {
-          alert(`No se encontró la dirección: "${p}".`);
-          return;
-        }
-        waypoints.push(L.latLng(res[0].lat, res[0].lon));
+      // BULTOS & VARIOS
+      {
+        id: 'cajas',
+        nombre: 'Cajas de Embalaje',
+        categoria: 'bultos',
+        icono: 'fa-box',
+        m3: 0.12,
+        cantidad: 0,
+        variantes: ['Medianas (Vajilla / Libros)', 'Grandes (Ropa / Varios)'],
+        varianteSelec: 'Medianas (Vajilla / Libros)'
+      },
+      {
+        id: 'valijas',
+        nombre: 'Valijas / Bolsos',
+        categoria: 'bultos',
+        icono: 'fa-suitcase-rolling',
+        m3: 0.18,
+        cantidad: 0,
+        variantes: ['Valija Rígida', 'Bolsas de Consorcio'],
+        varianteSelec: 'Valija Rígida'
+      },
+      {
+        id: 'bicicleta',
+        nombre: 'Bicicleta / Rodado',
+        categoria: 'bultos',
+        icono: 'fa-bicycle',
+        m3: 0.5,
+        cantidad: 0,
+        variantes: ['Bicicleta Adulto', 'Bicicleta Niño / Monopatín'],
+        varianteSelec: 'Bicicleta Adulto'
+      },
+      {
+        id: 'plantas',
+        nombre: 'Plantas / Macetas',
+        categoria: 'bultos',
+        icono: 'fa-seedling',
+        m3: 0.25,
+        cantidad: 0,
+        variantes: ['Chicas', 'Grandes / Pesadas'],
+        varianteSelec: 'Grandes / Pesadas'
       }
+    ];
 
-      if (routingControl) map.removeControl(routingControl);
+    // =========================================================================
+    // RENDERIZADO DEL INVENTARIO
+    // =========================================================================
+    function renderizarInventario(filtro = 'todos') {
+      const grid = document.getElementById('inventoryGrid');
+      grid.innerHTML = '';
 
-      routingControl = L.Routing.control({
-        waypoints: waypoints,
-        show: false
-      }).addTo(map);
+      catalogoItems.forEach((item, index) => {
+        if (filtro !== 'todos' && item.categoria !== filtro) return;
 
-      routingControl.on('routesfound', (e) => {
-        const kms = Math.round(e.routes[0].summary.totalDistance / 1000);
-        document.getElementById('distancia').value = kms;
-        document.getElementById('distancia-texto').textContent = kms + ' Km';
-        map.fitBounds(L.latLngBounds(waypoints), { padding: [30, 30] });
-      });
+        const hasQty = item.cantidad > 0;
+        const card = document.createElement('div');
+        card.className = `item-card ${hasQty ? 'has-qty' : ''}`;
+        card.id = `card_${item.id}`;
 
-    } catch (err) {
-      alert("Error al trazar la ruta. Verifique las direcciones.");
-    }
-  }
-
-  // ESCÁNER MARINA IA
-  async function procesarFotosMarinaIA() {
-    const input = document.getElementById('marina-archivos');
-    const btn = document.getElementById('btn-marina');
-    const statusBox = document.getElementById('marina-status');
-
-    if (!input.files || input.files.length === 0) {
-      alert("Seleccione o tome al menos una foto o video corto de sus muebles.");
-      return;
-    }
-
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Marina analizando los bienes...';
-    btn.disabled = true;
-    statusBox.style.display = 'none';
-
-    try {
-      const listaArchivos = [];
-      for (let file of input.files) {
-        const base64 = await convertirFileABase64(file);
-        listaArchivos.push({
-          mimeType: file.type || 'image/jpeg',
-          base64Data: base64.split(',')[1]
-        });
-      }
-
-      const res = await fetch(webAppUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({
-          action: "escaneoMarina",
-          archivos: listaArchivos
-        })
-      });
-
-      const data = await res.json();
-      if (data.success && data.result) {
-        const areaVarios = document.getElementById('detalles-varios');
-        if (areaVarios.value.trim() === '') {
-          areaVarios.value = data.result;
-        } else {
-          areaVarios.value = areaVarios.value + "\n\n" + data.result;
+        let chipsHTML = '';
+        if (item.variantes) {
+          chipsHTML = `
+            <span class="subpanel-label">Tipo / Medida:</span>
+            <div class="chip-group">
+              ${item.variantes.map(v => `
+                <div class="chip ${item.varianteSelec === v ? 'selected' : ''}" onclick="seleccionarChip(${index}, '${v}')">
+                  ${v}
+                </div>
+              `).join('')}
+            </div>
+          `;
         }
 
-        statusBox.textContent = "✅ ¡Inventario y volumetría calculados por Marina IA!";
-        statusBox.style.display = 'block';
-        alert("✅ Marina IA ha volcado el análisis del inventario en el formulario.");
-      } else {
-        alert("No se pudo interpretar el archivo. Complete el inventario manualmente.");
-      }
-    } catch (e) {
-      alert("Error de conexión con Marina IA: " + e.message);
-    } finally {
-      btn.innerHTML = '<i class="fas fa-magic"></i> Escanear con Marina IA';
-      btn.disabled = false;
-    }
-  }
+        let extrasHTML = '';
+        if (item.extras) {
+          extrasHTML = item.extras.map((ex, exIdx) => `
+            <label class="checkbox-extra">
+              <input type="checkbox" ${ex.checked ? 'checked' : ''} onchange="toggleExtra(${index}, ${exIdx}, this.checked)" />
+              ${ex.label}
+            </label>
+          `).join('');
+        }
 
-  function convertirFileABase64(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = err => reject(err);
-    });
-  }
-
-  // COMPILAR INVENTARIO COMPLETO
-  function compilarInventarioCompleto() {
-    let lineas = [];
-
-    // Living
-    const sofa = document.getElementById('inv-sofa').value;
-    if (sofa !== 'No') lineas.push(`• Sofá principal: ${sofa}`);
-    const mesaratonera = document.getElementById('inv-mesaratonera').value;
-    if (parseInt(mesaratonera) > 0) lineas.push(`• Mesa ratonera: ${mesaratonera}`);
-    const mesacomedor = document.getElementById('inv-mesacomedor').value;
-    if (parseInt(mesacomedor) > 0) lineas.push(`• Mesa de comedor: ${mesacomedor}`);
-    const sillas = document.getElementById('inv-sillas').value;
-    if (parseInt(sillas) > 0) lineas.push(`• Sillas: ${sillas}`);
-    const racktv = document.getElementById('inv-racktv').value;
-    if (parseInt(racktv) > 0) lineas.push(`• Mueble TV / Rack: ${racktv}`);
-    const tv = document.getElementById('inv-tv').value;
-    if (parseInt(tv) > 0) lineas.push(`• Televisor: ${tv}`);
-    const detLiving = document.getElementById('detalles-living').value.trim();
-    if (detLiving) lineas.push(`  Más Detalles Living: ${detLiving}`);
-
-    // Dormitorios
-    const camacant = document.getElementById('inv-camacant').value;
-    if (parseInt(camacant) > 0) lineas.push(`• Cama con colchón: ${camacant}`);
-    const mesasluz = document.getElementById('inv-mesasluz').value;
-    if (parseInt(mesasluz) > 0) lineas.push(`• Mesas de luz: ${mesasluz}`);
-    const comoda = document.getElementById('inv-comoda').value;
-    if (parseInt(comoda) > 0) lineas.push(`• Cómoda o cajonera: ${comoda}`);
-    const ropero = document.getElementById('inv-ropero').value;
-    if (parseInt(ropero) > 0) lineas.push(`• Ropero desarmado: ${ropero}`);
-    const detDorm = document.getElementById('detalles-dormitorio').value.trim();
-    if (detDorm) lineas.push(`  Más Detalles Dormitorios: ${detDorm}`);
-
-    // Cocina
-    const heladera = document.getElementById('inv-heladera').value;
-    if (parseInt(heladera) > 0) lineas.push(`• Heladera: ${heladera}`);
-    const freezer = document.getElementById('inv-freezer').value;
-    if (parseInt(freezer) > 0) lineas.push(`• Freezer: ${freezer}`);
-    const cocina = document.getElementById('inv-cocina').value;
-    if (parseInt(cocina) > 0) lineas.push(`• Cocina / Anafes: ${cocina}`);
-    const lavarropas = document.getElementById('inv-lavarropas').value;
-    if (parseInt(lavarropas) > 0) lineas.push(`• Lavarropas: ${lavarropas}`);
-    const detCocina = document.getElementById('detalles-cocina').value.trim();
-    if (detCocina) lineas.push(`  Más Detalles Cocina: ${detCocina}`);
-
-    // Varios
-    const espejo = document.getElementById('inv-espejo').value;
-    if (parseInt(espejo) > 0) lineas.push(`• Espejo grande: ${espejo}`);
-    const cajas = document.getElementById('inv-cajas').value;
-    if (parseInt(cajas) > 0) lineas.push(`• Cajas de cartón: ${cajas}`);
-    const bolsos = document.getElementById('inv-bolsos').value;
-    if (parseInt(bolsos) > 0) lineas.push(`• Bolsos y Valijas: ${bolsos}`);
-    const detVarios = document.getElementById('detalles-varios').value.trim();
-    if (detVarios) lineas.push(`\n📝 MÁS DETALLES Y MARINA IA:\n${detVarios}`);
-
-    return lineas.length > 0 ? lineas.join('\n') : "Inventario general de traslado.";
-  }
-
-  // ENVÍO FINAL POR WHATSAPP Y PERSISTENCIA
-  async function enviarSolicitud(e) {
-    e.preventDefault();
-
-    const btn = document.getElementById('btn-enviar');
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registrando...';
-    btn.disabled = true;
-
-    const cliente = document.getElementById('cliente').value.trim();
-    const telefono = document.getElementById('telefono').value.trim();
-    const fecha = document.getElementById('fecha').value;
-    const tipomov = document.getElementById('tipomov').value;
-    const origen = document.getElementById('origen').value.trim();
-    const destInputs = document.querySelectorAll('.destino-input');
-    const destinoStr = Array.from(destInputs).map(i => i.value.trim()).filter(v => v !== '').join(' -> ');
-    const distanciaKm = document.getElementById('distancia').value;
-
-    const inventarioTexto = compilarInventarioCompleto();
-
-    const payload = {
-      id: "AUTO-" + Date.now(),
-      fecha: fecha,
-      estado: "Autocotización",
-      cliente: cliente,
-      telefono: telefono,
-      tipomov: tipomov,
-      origen: origen,
-      destino: destinoStr,
-      distancia: distanciaKm,
-      detalles: inventarioTexto,
-      inventario: inventarioTexto,
-      asignacion: "A confirmar",
-      presupuesto: 0,
-      sena: 0,
-      combustible: 0,
-      peajesCosto: 0,
-      gastosviaticos: 0,
-      ayudante: 0,
-      comision: 0,
-      total: 0
-    };
-
-    // Envío en segundo plano al servidor Google Apps Script
-    try {
-      await fetch(webAppUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(payload)
+        card.innerHTML = `
+          <div class="item-top">
+            <div class="item-info">
+              <div class="item-icon"><i class="fas ${item.icono}"></i></div>
+              <div class="item-name">${item.nombre}</div>
+            </div>
+            <div class="item-counter">
+              <button class="btn-step" onclick="modificarCantidad(${index}, -1)">-</button>
+              <span class="qty-display" id="qty_${item.id}">${item.cantidad}</span>
+              <button class="btn-step" onclick="modificarCantidad(${index}, 1)">+</button>
+            </div>
+          </div>
+          <div class="item-subpanel">
+            ${chipsHTML}
+            ${extrasHTML}
+          </div>
+        `;
+        grid.appendChild(card);
       });
-    } catch (err) {
-      console.log("Guardado local/servidor:", err);
+
+      actualizarTotales();
     }
 
-    // Mensaje formateado a tu número de WhatsApp oficial de Nivel 9 (3517046541)
-    const mensajeWA = `🚚 *NUEVA AUTOCOTIZACIÓN - NIVEL 9*
-👤 *Cliente:* ${cliente}
-📱 *Teléfono:* ${telefono}
-📅 *Fecha Solicitada:* ${fecha}
-🚛 *Tipo:* ${tipomov}
+    function modificarCantidad(index, delta) {
+      catalogoItems[index].cantidad = Math.max(0, catalogoItems[index].cantidad + delta);
+      const item = catalogoItems[index];
+      const card = document.getElementById(`card_${item.id}`);
+      const qty = document.getElementById(`qty_${item.id}`);
+      
+      if (qty) qty.innerText = item.cantidad;
+      if (card) {
+        if (item.cantidad > 0) card.classList.add('has-qty');
+        else card.classList.remove('has-qty');
+      }
+      actualizarTotales();
+    }
 
+    function seleccionarChip(itemIdx, valor) {
+      catalogoItems[itemIdx].varianteSelec = valor;
+      renderizarInventario(categoriaActiva);
+    }
+
+    function toggleExtra(itemIdx, extraIdx, checked) {
+      catalogoItems[itemIdx].extras[extraIdx].checked = checked;
+    }
+
+    let categoriaActiva = 'todos';
+    function filtrarCategoria(cat) {
+      categoriaActiva = cat;
+      document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      renderizarInventario(cat);
+    }
+
+    // =========================================================================
+    // CÁLCULO DE TOTALES Y SUGERENCIA DE UNIDAD
+    // =========================================================================
+    function actualizarTotales() {
+      let totalItems = 0;
+      let totalM3 = 0;
+
+      catalogoItems.forEach(i => {
+        if (i.cantidad > 0) {
+          totalItems += i.cantidad;
+          let m3Item = i.m3;
+          if (i.extras && i.extras.some(e => e.id === 'sommier' && e.checked)) m3Item += 0.8;
+          totalM3 += i.cantidad * m3Item;
+        }
+      });
+
+      document.getElementById('totalItemsDisplay').innerText = totalItems;
+      document.getElementById('totalM3Display').innerText = totalM3.toFixed(1) + ' m³';
+
+      let vehiculo = 'A definir';
+      if (totalM3 > 0 && totalM3 <= 14) vehiculo = 'Furgón Sprinter (Hasta 14 m³)';
+      else if (totalM3 > 14 && totalM3 <= 38) vehiculo = 'Chasis / Balancín (Hasta 38 m³)';
+      else if (totalM3 > 38) vehiculo = 'Camión Semi / Sider (Hasta 90 m³)';
+
+      document.getElementById('vehiculoSugeridoDisplay').innerText = vehiculo;
+    }
+
+    // =========================================================================
+    // CONSTRUCCIÓN DEL MENSAJE WHATSAPP (PLANTILLA INTACTA CON EMOJIS)
+    // =========================================================================
+    function compilarTextoInventario() {
+      const lineas = [];
+      catalogoItems.forEach(i => {
+        if (i.cantidad > 0) {
+          let det = i.varianteSelec ? ` - ${i.varianteSelec}` : '';
+          if (i.extras) {
+            const exActivos = i.extras.filter(e => e.checked).map(e => e.label);
+            if (exActivos.length > 0) det += ` (${exActivos.join(', ')})`;
+          }
+          lineas.push(`• ${i.cantidad}x ${i.nombre}${det}`);
+        }
+      });
+      return lineas.length > 0 ? lineas.join('\n') : 'Sin bultos declarados';
+    }
+
+    // =========================================================================
+    // ENVÍO DUAL: SUPABASE (ERP EN VIVO) + WHATSAPP
+    // =========================================================================
+    async function enviarCotizacionFinal() {
+      const nombre = document.getElementById('cli_nombre').value.trim();
+      const tel = document.getElementById('cli_tel').value.trim();
+      const origen = document.getElementById('cli_origen').value.trim();
+      const destino = document.getElementById('cli_destino').value.trim();
+      const fecha = document.getElementById('cli_fecha').value || new Date().toISOString().split('T')[0];
+      const accesos = document.getElementById('cli_accesos').value;
+      const obs = document.getElementById('cli_obs').value.trim();
+
+      if (!nombre || !tel || !origen || !destino) {
+        alert('Por favor completa Nombre, Teléfono, Origen y Destino antes de continuar.');
+        return;
+      }
+
+      const totalItems = document.getElementById('totalItemsDisplay').innerText;
+      const totalM3 = document.getElementById('totalM3Display').innerText;
+      const vehiculo = document.getElementById('vehiculoSugeridoDisplay').innerText;
+      const inventarioTxt = compilarTextoInventario();
+
+      const btn = document.getElementById('btnEnviar');
+      const statusMsg = document.getElementById('statusMsg');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+
+      // 1. IMPACTO AUTOMÁTICO EN SUPABASE (ERP NIVEL 9)
+      if (supabaseClient) {
+        try {
+          const payloadSupabase = {
+            id: 'MOV-' + Date.now(),
+            fecha: fecha,
+            estado: 'Autocotización',
+            tipocliente: 'Particular',
+            cliente: nombre,
+            telefono: tel,
+            tipomov: 'Mudanzas y Muebles',
+            asignacion: vehiculo.includes('Furgón') ? 'Furgón' : vehiculo.includes('Chasis') ? 'Chasis' : 'Camión Semi',
+            origen: origen,
+            destino: destino,
+            distancia: '0',
+            inventario: `Accesos: ${accesos}\nVolumen: ${totalM3} (${totalItems} bultos)\n\nDetalle:\n${inventarioTxt}\n\nObs: ${obs}`,
+            presupuesto: '0',
+            sena: '0',
+            total: '0'
+          };
+
+          const { error } = await supabaseClient.from('movimientos').insert([payloadSupabase]);
+          if (error) console.warn('Aviso Supabase:', error.message);
+        } catch (e) {
+          console.warn('Conexión Supabase no disponible en este momento:', e);
+        }
+      }
+
+      // 2. COMPILACIÓN WHATSAPP OFICIAL CON EMOJIS
+      const mensajeWA = 
+`🚚 *SOLICITUD DE COTIZACIÓN - NIVEL 9 LOGÍSTICA*
+
+👤 *Cliente:* ${nombre}
+📱 *WhatsApp:* ${tel}
 📍 *Origen:* ${origen}
-🏁 *Destino:* ${destinoStr}
-📏 *Distancia Ida:* ${distanciaKm} Km
+🏁 *Destino:* ${destino}
+🗓️ *Fecha Sugerida:* ${fecha.split('-').reverse().join('/')}
+🏢 *Accesos:* ${accesos}
 
-📦 *INVENTARIO Y DETALLES DE CARGA:*
-${inventarioTexto}`;
+📦 *INVENTARIO DECLARADO:*
+${inventarioTxt}
 
-    const urlWA = `https://wa.me/5493517046541?text=${encodeURIComponent(mensajeWA)}`;
-    window.location.href = urlWA;
-  }
-</script>
+📐 *Volumen Estimado:* ${totalM3} (${totalItems} bultos totales)
+🚛 *Unidad Sugerida:* ${vehiculo}
+${obs ? `\n📝 *Observaciones:* ${obs}` : ''}
 
+_Enviado desde el Cotizador Online Nivel 9_`;
+
+      const urlWhatsApp = `https://wa.me/${WA_DESTINO}?text=${encodeURIComponent(mensajeWA)}`;
+
+      // 3. APERTURA DE WHATSAPP
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fab fa-whatsapp" style="font-size:1.2rem;"></i> Cotizar y Enviar';
+        window.open(urlWhatsApp, '_blank');
+      }, 350);
+    }
+
+    // Inicializar inventario al cargar
+    window.addEventListener('DOMContentLoaded', () => {
+      renderizarInventario('todos');
+    });
+  </script>
 </body>
 </html>
