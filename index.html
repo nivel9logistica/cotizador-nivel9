@@ -15,6 +15,9 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+  <!-- SDK Oficial de Supabase v2 -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
     :root {
       --bg-dark: #09090b;
@@ -257,7 +260,7 @@
       margin-top: 10px;
     }
 
-    /* CATEGORIAS INVENTARIO */
+    /* CATEGORÍAS INVENTARIO */
     .cat-tabs {
       display: flex;
       gap: 8px;
@@ -514,7 +517,7 @@
 <body>
 
   <div class="container">
-    <!-- ENCABEZADO Y LOGO SVG OFICIAL -->
+    <!-- ENCABEZADO Y LOGO SVG -->
     <div class="header-box">
       <div class="badge-sub">Cotizador Oficial Online</div>
       <svg class="brand-logo-svg" viewBox="0 0 280 115">
@@ -537,14 +540,12 @@
       <div class="step-pill" id="stepPill2"><span class="step-num">2</span> Inventario Detallado</div>
     </div>
 
-    <!-- ========================================================
-         PASO 1: DATOS, MODALIDAD, ACCESOS ORIGEN/DESTINO Y MAPA
-         ======================================================== -->
+    <!-- PASO 1: DATOS, MODALIDAD, ACCESOS Y MAPA -->
     <div id="pantallaPaso1">
       <div class="card">
         <div class="card-title"><i class="fas fa-truck-moving" style="color:var(--brand);"></i> 1. Modalidad del Servicio</div>
         <div class="modalidad-grid">
-          <div class="modalidad-card selected" id="modLocal" onclick="seleccionarModalidad('Local')">
+          <div class="modalidad-card selected" id="modLocal" onclick="seleccionarModalidad('Mudanza Local')">
             <i class="fas fa-city"></i>
             <h4>Mudanza Local</h4>
             <p>Córdoba y Gran Córdoba (Hasta 150 km)</p>
@@ -624,9 +625,7 @@
       </div>
     </div>
 
-    <!-- ========================================================
-         PASO 2: INVENTARIO ULTRA DETALLADO Y DESPACHO
-         ======================================================== -->
+    <!-- PASO 2: INVENTARIO DETALLADO -->
     <div id="pantallaPaso2" style="display:none;">
       <div class="card">
         <div class="card-title"><i class="fas fa-boxes" style="color:var(--brand);"></i> 2. Inventario Detallado (Multi-Unidad)</div>
@@ -677,30 +676,22 @@
 
   <script>
     // =========================================================================
-    // DICCIONARIO UNICODE INDESTRUCTIBLE (ANTI-SIGNOS DE PREGUNTA EN WHATSAPP)
+    // CONEXIÓN DIRECTA CON SUPABASE (TUS CLAVES EXACTAS DE NIVEL 9)
     // =========================================================================
-    const EMOJI = {
-      CAMION: '\u{1F69A}',         // 🚚
-      CLIENTE: '\u{1F464}',        // 👤
-      CELULAR: '\u{1F4F1}',        // 📱
-      ORIGEN: '\u{1F4CD}',         // 📍
-      DESTINO: '\u{1F3C1}',        // 🏁
-      CALENDARIO: '\u{1F5D3}\uFE0F',// 🗓️
-      EDIFICIO: '\u{1F3E2}',       // 🏢
-      CAJA: '\u{1F4E6}',           // 📦
-      REGLA: '\u{1F4D0}',          // 📐
-      CAMION_GRANDE: '\u{1F69B}',  // 🚛
-      NOTA: '\u{1F4DD}',           // 📝
-      CHECK: '\u{2705}',           // ✅
-      RUTA: '\u{1F6E3}\uFE0F'      // 🛣️
-    };
+    const SUPABASE_URL = 'https://yfrgqyezynojohqgkxjt.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_JAp9zWYr_ugkEkVg0WPI5A_gaA5I0sL';
 
-    const WA_DESTINO = '5493517046541'; // Número de recepción comercial Nivel 9
+    const supabaseClient = (window.supabase && typeof window.supabase.createClient === 'function')
+      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+      : null;
+
+    // Número de recepción de WhatsApp
+    const WA_DESTINO = '5493512233444';
     let modalidadServicio = 'Mudanza Local';
 
     function seleccionarModalidad(m) {
       modalidadServicio = m;
-      document.getElementById('modLocal').classList.toggle('selected', m === 'Local');
+      document.getElementById('modLocal').classList.toggle('selected', m === 'Mudanza Local');
       document.getElementById('modLarga').classList.toggle('selected', m === 'Larga Distancia');
     }
 
@@ -739,7 +730,7 @@
     // =========================================================================
     let map, polylineRuta;
     function initMap() {
-      map = L.map('map').setView([-31.4135, -64.1810], 11); // Córdoba Capital
+      map = L.map('map').setView([-31.4135, -64.1810], 11);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap'
       }).addTo(map);
@@ -786,7 +777,7 @@
     }
 
     // =========================================================================
-    // CATÁLOGO DE ITEMS (CON DESGLOSE MULTI-UNIDAD INDIVIDUAL)
+    // CATÁLOGO DE ITEMS (MULTI-UNIDAD INDIVIDUAL)
     // =========================================================================
     const catalogoItems = [
       {
@@ -911,9 +902,6 @@
       }
     ];
 
-    // =========================================================================
-    // RENDERIZADO DEL INVENTARIO (CON GESTIÓN POR CADA UNIDAD)
-    // =========================================================================
     let categoriaActiva = 'todos';
 
     function renderizarInventario(filtro = 'todos') {
@@ -1062,9 +1050,9 @@
     }
 
     // =========================================================================
-    // DESPACHO FINAL A WHATSAPP (100% LIBRE DE ROMBOS )
+    // ENVÍO SIMULTÁNEO: SUPABASE (ERP EN VIVO) + WHATSAPP LIMPIO
     // =========================================================================
-    function enviarCotizacionFinal() {
+    async function enviarCotizacionFinal() {
       const nombre = document.getElementById('cli_nombre').value.trim();
       const tel = document.getElementById('cli_tel').value.trim();
       const origen = document.getElementById('cli_origen').value.trim();
@@ -1079,7 +1067,7 @@
       const totalM3 = document.getElementById('totalM3Display').innerText;
       const vehiculo = document.getElementById('vehiculoSugeridoDisplay').innerText;
 
-      // Construcción del inventario desglosado
+      // Compilar texto del inventario
       const lineas = [];
       catalogoItems.forEach(item => {
         item.unidades.forEach((u, idx) => {
@@ -1093,33 +1081,109 @@
         });
       });
       const inventarioTxt = lineas.length > 0 ? lineas.join('\n') : 'Sin bultos seleccionados';
-
       const fechaFmt = fecha.split('-').reverse().join('/');
 
-      // Mensaje estructurado con secuencias Unicode infalibles
+      const btn = document.getElementById('btnEnviar');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registrando...';
+
+      // 1. IMPACTO INMEDIATO EN SUPABASE
+      if (supabaseClient) {
+        try {
+          const payloadSupabase = {
+            id: 'MOV-' + Date.now(),
+            fecha: fecha,
+            estado: 'Autocotización',
+            tipocliente: 'Particular',
+            cliente: nombre,
+            telefono: tel,
+            tipomov: 'Mudanzas y Muebles',
+            asignacion: vehiculo.includes('Furgón') ? 'Furgón' : vehiculo.includes('Chasis') ? 'Chasis' : 'Camión Semi',
+            origen: origen,
+            destino: destino,
+            distancia: String(kms),
+            inventario: `Modalidad: ${modalidadServicio}\nAccesos Origen: ${accOrigen}\nAccesos Destino: ${accDestino}\nVolumen: ${totalM3} (${totalItems} bultos)\n\nDetalle Inventario:\n${inventarioTxt}\n\nObs: ${obs}`,
+            presupuesto: '0',
+            sena: '0',
+            combustible: '0',
+            peajescosto: '0',
+            viaticos: '0',
+            ayudante: '0',
+            comision: '0',
+            gastoext: '0',
+            total: '0'
+          };
+
+          const { error } = await supabaseClient.from('movimientos').insert([payloadSupabase]);
+          if (error) {
+            console.warn('Aviso Supabase:', error.message);
+          }
+        } catch (err) {
+          console.warn('Conexión Supabase:', err);
+        }
+      }
+
+      // 2. CONSTRUCCIÓN DEL MENSAJE (UNICODE CODEPOINTS)
+      const E = {
+        CAMION: String.fromCodePoint(0x1F69A),
+        CLIENTE: String.fromCodePoint(0x1F464),
+        CELULAR: String.fromCodePoint(0x1F4F1),
+        ORIGEN: String.fromCodePoint(0x1F4CD),
+        DESTINO: String.fromCodePoint(0x1F3C1),
+        CALENDARIO: String.fromCodePoint(0x1F5D3, 0xFE0F),
+        EDIFICIO: String.fromCodePoint(0x1F3E2),
+        CAJA: String.fromCodePoint(0x1F4E6),
+        REGLA: String.fromCodePoint(0x1F4D0),
+        CAMION_GRANDE: String.fromCodePoint(0x1F69B),
+        NOTA: String.fromCodePoint(0x1F4DD),
+        RUTA: String.fromCodePoint(0x1F6E3, 0xFE0F)
+      };
+
       const mensaje = 
-`${EMOJI.CAMION} *SOLICITUD DE COTIZACIÓN - NIVEL 9 LOGÍSTICA*
+`${E.CAMION} *SOLICITUD DE COTIZACIÓN - NIVEL 9 LOGÍSTICA*
 
-${EMOJI.CLIENTE} *Cliente:* ${nombre}
-${EMOJI.CELULAR} *WhatsApp:* ${tel}
-${EMOJI.ORIGEN} *Origen:* ${origen}
-${EMOJI.EDIFICIO} *Accesos Origen:* ${accOrigen}
-${EMOJI.DESTINO} *Destino:* ${destino}
-${EMOJI.EDIFICIO} *Accesos Destino:* ${accDestino}
-${EMOJI.RUTA} *Distancia Estimada:* ${kms} Km (${modalidadServicio})
-${EMOJI.CALENDARIO} *Fecha Sugerida:* ${fechaFmt}
+${E.CLIENTE} *Cliente:* ${nombre}
+${E.CELULAR} *WhatsApp:* ${tel}
+${E.ORIGEN} *Origen:* ${origen}
+${E.EDIFICIO} *Accesos Origen:* ${accOrigen}
+${E.DESTINO} *Destino:* ${destino}
+${E.EDIFICIO} *Accesos Destino:* ${accDestino}
+${E.RUTA} *Distancia Estimada:* ${kms} Km (${modalidadServicio})
+${E.CALENDARIO} *Fecha Sugerida:* ${fechaFmt}
 
-${EMOJI.CAJA} *INVENTARIO DECLARADO:*
+${E.CAJA} *INVENTARIO DECLARADO:*
 ${inventarioTxt}
 
-${EMOJI.REGLA} *Volumen Estimado:* ${totalM3} (${totalItems} bultos totales)
-${EMOJI.CAMION_GRANDE} *Unidad Sugerida:* ${vehiculo}
-${obs ? `\n${EMOJI.NOTA} *Observaciones:* ${obs}` : ''}
+${E.REGLA} *Volumen Estimado:* ${totalM3} (${totalItems} bultos totales)
+${E.CAMION_GRANDE} *Unidad Sugerida:* ${vehiculo}
+${obs ? `\n${E.NOTA} *Observaciones:* ${obs}` : ''}
 
 _Enviado desde el Cotizador Online Nivel 9_`;
 
-      const urlWhatsApp = `https://wa.me/${WA_DESTINO}?text=${encodeURIComponent(mensaje)}`;
-      window.open(urlWhatsApp, '_blank');
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        try {
+          await navigator.clipboard.writeText(mensaje);
+        } catch (e) {}
+      }
+
+      // Bypass wa.me: PC abre directo web.whatsapp.com, móvil api.whatsapp.com
+      const esMovil = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      const baseWhatsAppUrl = esMovil
+        ? `https://api.whatsapp.com/send?phone=${WA_DESTINO}&text=`
+        : `https://web.whatsapp.com/send?phone=${WA_DESTINO}&text=`;
+
+      const urlFinal = baseWhatsAppUrl + encodeURIComponent(mensaje);
+
+      const linkTemporal = document.createElement('a');
+      linkTemporal.href = urlFinal;
+      linkTemporal.target = '_blank';
+      linkTemporal.rel = 'noopener noreferrer';
+      document.body.appendChild(linkTemporal);
+      linkTemporal.click();
+      document.body.removeChild(linkTemporal);
+
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fab fa-whatsapp" style="font-size:1.15rem;"></i> Cotizar y Enviar';
     }
 
     window.addEventListener('DOMContentLoaded', () => {
