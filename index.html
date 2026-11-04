@@ -5,14 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cotizador Online | Nivel 9 Logística de Excelencia</title>
   
-  <!-- Tipografía Outfit & Iconografía FontAwesome -->
+  <!-- Tipografía Outfit & Iconos FontAwesome -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   
-  <!-- SDK Oficial de Supabase v2 -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Librería de Mapas Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <style>
     :root {
@@ -47,18 +48,18 @@
       margin: 0 auto;
     }
 
-    /* CABECERA CORPORATIVA Y LOGO CORREGIDO */
+    /* ENCABEZADO Y LOGO */
     .header-box {
       text-align: center;
-      margin-bottom: 28px;
-      padding-bottom: 18px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
       border-bottom: 1px solid var(--card-border);
     }
 
     .brand-logo-svg {
-      height: 52px;
+      height: 50px;
       width: auto;
-      margin: 0 auto 10px;
+      margin: 0 auto 8px;
       display: block;
     }
 
@@ -69,7 +70,7 @@
       color: var(--brand);
       padding: 4px 14px;
       border-radius: 20px;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 700;
       letter-spacing: 1px;
       text-transform: uppercase;
@@ -77,18 +78,61 @@
     }
 
     .header-title {
-      font-size: 1.5rem;
+      font-size: 1.45rem;
       font-weight: 800;
       color: var(--text-white);
     }
 
     .header-desc {
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       color: var(--text-muted);
       margin-top: 4px;
     }
 
-    /* TARJETAS DE SECCIÓN */
+    /* INDICADOR DE PASOS */
+    .steps-nav {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .step-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 30px;
+      background: #18181b;
+      border: 1px solid var(--card-border);
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-dim);
+    }
+
+    .step-pill.active {
+      background: rgba(234, 88, 12, 0.15);
+      border-color: var(--brand);
+      color: var(--brand);
+    }
+
+    .step-pill .step-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #27272a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+    }
+
+    .step-pill.active .step-num {
+      background: var(--brand);
+      color: #fff;
+    }
+
+    /* TARJETAS */
     .card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
@@ -99,17 +143,57 @@
     }
 
     .card-title {
-      font-size: 1.15rem;
+      font-size: 1.12rem;
       font-weight: 800;
       color: var(--text-white);
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
       border-left: 4px solid var(--brand);
       padding-left: 12px;
     }
 
+    /* SELECTOR DE MODALIDAD */
+    .modalidad-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .modalidad-card {
+      background: #111113;
+      border: 2px solid var(--card-border);
+      border-radius: 12px;
+      padding: 14px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .modalidad-card.selected {
+      border-color: var(--brand);
+      background: rgba(234, 88, 12, 0.08);
+    }
+
+    .modalidad-card i {
+      font-size: 1.5rem;
+      color: var(--brand);
+      margin-bottom: 6px;
+    }
+
+    .modalidad-card h4 {
+      font-size: 0.95rem;
+      font-weight: 800;
+    }
+
+    .modalidad-card p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* FORMULARIOS */
     .form-grid {
       display: grid;
       grid-template-columns: 1fr;
@@ -125,12 +209,12 @@
     .form-group {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 5px;
     }
 
     label {
-      font-size: 0.82rem;
-      font-weight: 600;
+      font-size: 0.8rem;
+      font-weight: 700;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -141,41 +225,60 @@
       border: 1px solid var(--card-border);
       border-radius: 8px;
       color: #fff;
-      padding: 12px 14px;
-      font-size: 0.95rem;
+      padding: 11px 14px;
+      font-size: 0.92rem;
       outline: none;
-      transition: all 0.2s ease;
+      transition: border 0.2s;
     }
 
     input:focus, select:focus, textarea:focus {
       border-color: var(--brand);
-      box-shadow: 0 0 0 3px var(--brand-glow);
+      box-shadow: 0 0 0 2px var(--brand-glow);
     }
 
-    /* CATEGORÍAS DEL INVENTARIO */
+    /* MAPA */
+    #map {
+      width: 100%;
+      height: 240px;
+      border-radius: 10px;
+      border: 1px solid var(--card-border);
+      margin-top: 10px;
+      z-index: 1;
+    }
+
+    .km-badge-box {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #111113;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+      margin-top: 10px;
+    }
+
+    /* CATEGORIAS INVENTARIO */
     .cat-tabs {
       display: flex;
       gap: 8px;
       overflow-x: auto;
-      padding-bottom: 10px;
-      margin-bottom: 16px;
-      scrollbar-width: thin;
+      padding-bottom: 8px;
+      margin-bottom: 14px;
     }
 
     .cat-btn {
       background: #111113;
       border: 1px solid var(--card-border);
       color: var(--text-muted);
-      padding: 8px 14px;
+      padding: 7px 13px;
       border-radius: 20px;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 700;
       cursor: pointer;
       white-space: nowrap;
       display: flex;
       align-items: center;
       gap: 6px;
-      transition: all 0.2s;
     }
 
     .cat-btn.active, .cat-btn:hover {
@@ -184,7 +287,7 @@
       border-color: var(--brand);
     }
 
-    /* GRID DE ITEMS */
+    /* GRID DE ITEMS E INVENTARIO */
     .inventory-grid {
       display: grid;
       grid-template-columns: 1fr;
@@ -201,14 +304,13 @@
       background: #111113;
       border: 1px solid var(--card-border);
       border-radius: 12px;
-      padding: 14px;
-      transition: all 0.25s ease;
+      padding: 12px 14px;
+      transition: border 0.2s;
     }
 
     .item-card.has-qty {
       border-color: var(--brand);
-      background: #191412;
-      box-shadow: 0 4px 15px rgba(234, 88, 12, 0.15);
+      background: #171311;
     }
 
     .item-top {
@@ -224,20 +326,19 @@
     }
 
     .item-icon {
-      width: 36px;
-      height: 36px;
+      width: 34px;
+      height: 34px;
       background: #27272a;
       border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: var(--brand);
-      font-size: 1rem;
     }
 
     .item-name {
       font-weight: 700;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
     }
 
     .item-counter {
@@ -246,12 +347,12 @@
       gap: 8px;
       background: #27272a;
       border-radius: 20px;
-      padding: 3px 6px;
+      padding: 2px 6px;
     }
 
     .btn-step {
-      width: 28px;
-      height: 28px;
+      width: 26px;
+      height: 26px;
       background: #3f3f46;
       border: none;
       color: #fff;
@@ -261,7 +362,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: background 0.15s;
     }
 
     .btn-step:hover {
@@ -269,57 +369,47 @@
     }
 
     .qty-display {
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 800;
-      min-width: 24px;
+      min-width: 20px;
       text-align: center;
-      color: #fff;
     }
 
-    /* SUBPANEL DE ESPECIFICACIONES DESPLEGABLE */
-    .item-subpanel {
-      display: none;
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px dashed #3f3f46;
-      animation: fadeIn 0.25s ease-in-out;
+    /* SUBPANEL POR UNIDAD INDIVIDUAL */
+    .unit-block {
+      background: #18181b;
+      border: 1px solid #3f3f46;
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 8px;
     }
 
-    .item-card.has-qty .item-subpanel {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-4px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .subpanel-label {
-      font-size: 0.75rem;
-      font-weight: 700;
+    .unit-title {
+      font-size: 0.76rem;
+      font-weight: 800;
       color: var(--brand);
       text-transform: uppercase;
       margin-bottom: 6px;
-      display: block;
+      display: flex;
+      justify-content: space-between;
     }
 
     .chip-group {
       display: flex;
-      gap: 6px;
+      gap: 5px;
       flex-wrap: wrap;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .chip {
       background: #27272a;
       border: 1px solid #3f3f46;
       color: #d4d4d8;
-      font-size: 0.78rem;
-      padding: 5px 10px;
+      font-size: 0.74rem;
+      padding: 4px 8px;
       border-radius: 6px;
       cursor: pointer;
       font-weight: 600;
-      transition: all 0.15s;
     }
 
     .chip.selected {
@@ -331,42 +421,41 @@
     .checkbox-extra {
       display: flex;
       align-items: center;
-      gap: 7px;
-      font-size: 0.8rem;
-      color: #e4e4e7;
-      margin-top: 4px;
+      gap: 6px;
+      font-size: 0.78rem;
+      color: #d4d4d8;
       cursor: pointer;
+      margin-top: 4px;
     }
 
     .checkbox-extra input {
       accent-color: var(--brand);
-      width: 15px;
-      height: 15px;
-      cursor: pointer;
+      width: 14px;
+      height: 14px;
     }
 
-    /* BARRA FLOTANTE DE TOTALES */
+    /* BARRA FLOTANTE DE RESUMEN */
     .summary-bar {
       position: sticky;
       bottom: 12px;
       z-index: 99;
-      background: rgba(24, 24, 27, 0.95);
+      background: rgba(24, 24, 27, 0.96);
       border: 1px solid var(--brand);
       backdrop-filter: blur(10px);
       border-radius: 14px;
-      padding: 14px 20px;
+      padding: 12px 18px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
-      margin-top: 24px;
+      margin-top: 20px;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 10px;
     }
 
     .summary-stats {
       display: flex;
-      gap: 20px;
+      gap: 16px;
     }
 
     .stat-item {
@@ -375,56 +464,59 @@
     }
 
     .stat-label {
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       color: var(--text-muted);
       text-transform: uppercase;
       font-weight: 700;
     }
 
     .stat-val {
-      font-size: 1.25rem;
+      font-size: 1.15rem;
       font-weight: 900;
       color: #fff;
     }
 
-    .btn-submit {
+    .btn-action {
       background: var(--brand);
       color: #fff;
       border: none;
-      padding: 12px 24px;
+      padding: 11px 20px;
       border-radius: 10px;
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 800;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       transition: all 0.2s;
-      box-shadow: 0 4px 15px var(--brand-glow);
     }
 
-    .btn-submit:hover {
+    .btn-action:hover {
       background: var(--brand-hover);
-      transform: translateY(-2px);
     }
 
-    .status-msg {
-      font-size: 0.85rem;
-      text-align: center;
-      margin-top: 10px;
-      font-weight: 600;
-      display: none;
+    .btn-back {
+      background: #27272a;
+      color: #e4e4e7;
+      border: none;
+      padding: 11px 16px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-back:hover {
+      background: #3f3f46;
     }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <!-- ENCABEZADO CON LOGO VECTORIAL IDENTIDAD NIVEL 9 -->
+    <!-- ENCABEZADO Y LOGO SVG OFICIAL -->
     <div class="header-box">
-      <div class="badge-sub">Herramienta Oficial de Cotización</div>
-      
-      <!-- LOGO VECTORIAL: NIVEL (BLANCO) + 9 (NARANJA) -->
+      <div class="badge-sub">Cotizador Oficial Online</div>
       <svg class="brand-logo-svg" viewBox="0 0 280 115">
         <text x="140" y="72" text-anchor="middle" font-family="'Outfit', sans-serif" font-weight="800" font-size="70">
           <tspan fill="#ffffff">NIVEL</tspan>
@@ -435,379 +527,453 @@
           LOGISTICA DE EXCELENCIA
         </text>
       </svg>
-      
-      <h1 class="header-title">Cotizador Online de Fletes y Mudanzas</h1>
-      <p class="header-desc">Selecciona tu inventario detallado para calcular el volumen exacto y la tarifa al instante.</p>
+      <h1 class="header-title">Cotizador de Fletes y Mudanzas</h1>
+      <p class="header-desc">Planificá tu traslado con precisión milimétrica y cotización al instante.</p>
     </div>
 
-    <!-- PASO 1: DATOS DE CONTACTO Y RUTA -->
-    <div class="card">
-      <div class="card-title"><i class="fas fa-map-marked-alt" style="color:var(--brand);"></i> 1. Datos del Traslado y Contacto</div>
-      <div class="form-grid two-cols">
-        <div class="form-group">
-          <label>Nombre y Apellido / Razón Social *</label>
-          <input type="text" id="cli_nombre" placeholder="Ej: Juan Pérez / Empresa SRL" required />
+    <!-- NAVEGADOR DE PASOS -->
+    <div class="steps-nav">
+      <div class="step-pill active" id="stepPill1"><span class="step-num">1</span> Datos &amp; Ruta</div>
+      <div class="step-pill" id="stepPill2"><span class="step-num">2</span> Inventario Detallado</div>
+    </div>
+
+    <!-- ========================================================
+         PASO 1: DATOS, MODALIDAD, ACCESOS ORIGEN/DESTINO Y MAPA
+         ======================================================== -->
+    <div id="pantallaPaso1">
+      <div class="card">
+        <div class="card-title"><i class="fas fa-truck-moving" style="color:var(--brand);"></i> 1. Modalidad del Servicio</div>
+        <div class="modalidad-grid">
+          <div class="modalidad-card selected" id="modLocal" onclick="seleccionarModalidad('Local')">
+            <i class="fas fa-city"></i>
+            <h4>Mudanza Local</h4>
+            <p>Córdoba y Gran Córdoba (Hasta 150 km)</p>
+          </div>
+          <div class="modalidad-card" id="modLarga" onclick="seleccionarModalidad('Larga Distancia')">
+            <i class="fas fa-road"></i>
+            <h4>Larga Distancia</h4>
+            <p>Interprovincial y Nacional (+150 km)</p>
+          </div>
         </div>
-        <div class="form-group">
-          <label>WhatsApp / Teléfono de Contacto *</label>
-          <input type="tel" id="cli_tel" placeholder="Ej: 3512345678 (Sin 0 ni 15)" required />
+
+        <div class="card-title" style="margin-top:20px;"><i class="fas fa-user-edit" style="color:var(--brand);"></i> 2. Contacto y Ruta</div>
+        <div class="form-grid two-cols">
+          <div class="form-group">
+            <label>Nombre y Apellido / Razón Social *</label>
+            <input type="text" id="cli_nombre" placeholder="Ej: Juan Pérez" required />
+          </div>
+          <div class="form-group">
+            <label>WhatsApp de Contacto *</label>
+            <input type="tel" id="cli_tel" placeholder="Ej: 3512345678 (Sin 0 ni 15)" required />
+          </div>
+          <div class="form-group">
+            <label>Dirección de Origen (Localidad y Calle) *</label>
+            <input type="text" id="cli_origen" placeholder="Ej: Córdoba Capital, B° Centro" onblur="trazarRutaMapa()" required />
+          </div>
+          <div class="form-group">
+            <label>Inmueble / Accesos en Origen *</label>
+            <select id="cli_accesos_origen">
+              <option value="Planta Baja / Casa">Planta Baja / Casa</option>
+              <option value="Edificio por Ascensor">Edificio por Ascensor</option>
+              <option value="Edificio por Escalera (Piso 1 o 2)">Edificio por Escalera (Piso 1 o 2)</option>
+              <option value="Edificio por Escalera (Piso 3 o más)">Edificio por Escalera (Piso 3 o más)</option>
+              <option value="Complejo / Galpón">Complejo / Galpón</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Dirección de Destino *</label>
+            <input type="text" id="cli_destino" placeholder="Ej: Villa Carlos Paz / Rosario" onblur="trazarRutaMapa()" required />
+          </div>
+          <div class="form-group">
+            <label>Inmueble / Accesos en Destino *</label>
+            <select id="cli_accesos_destino">
+              <option value="Planta Baja / Casa">Planta Baja / Casa</option>
+              <option value="Edificio por Ascensor">Edificio por Ascensor</option>
+              <option value="Edificio por Escalera (Piso 1 o 2)">Edificio por Escalera (Piso 1 o 2)</option>
+              <option value="Edificio por Escalera (Piso 3 o más)">Edificio por Escalera (Piso 3 o más)</option>
+              <option value="Complejo / Galpón">Complejo / Galpón</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Fecha Estimada del Traslado</label>
+            <input type="date" id="cli_fecha" />
+          </div>
+          <div class="form-group">
+            <label>Distancia Estimada (Km)</label>
+            <input type="number" id="cli_kms" placeholder="0" min="1" />
+          </div>
         </div>
-        <div class="form-group">
-          <label>Dirección de Origen (Localidad y Calle) *</label>
-          <input type="text" id="cli_origen" placeholder="Ej: Córdoba Capital, B° Centro" required />
+
+        <div style="margin-top:14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <label><i class="fas fa-map-marked-alt"></i> Trazado Satelital OSRM</label>
+            <button type="button" class="btn-action" style="padding:4px 12px; font-size:0.75rem;" onclick="trazarRutaMapa()">
+              <i class="fas fa-sync"></i> Trazar Ruta
+            </button>
+          </div>
+          <div id="map"></div>
+          <div class="km-badge-box">
+            <span style="font-size:0.85rem; color:var(--text-muted);">Kilómetros de Ruta Calculados:</span>
+            <strong id="kmBadgeDisplay" style="color:var(--brand); font-size:1.1rem;">0 Km</strong>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Dirección de Destino *</label>
-          <input type="text" id="cli_destino" placeholder="Ej: Villa Carlos Paz / Rosario" required />
-        </div>
-        <div class="form-group">
-          <label>Fecha Estimada del Servicio</label>
-          <input type="date" id="cli_fecha" />
-        </div>
-        <div class="form-group">
-          <label>Tipo de Inmueble / Accesos</label>
-          <select id="cli_accesos">
-            <option value="Planta Baja / Casa">Planta Baja / Casa</option>
-            <option value="Edificio por Ascensor">Edificio por Ascensor</option>
-            <option value="Edificio por Escalera">Edificio por Escalera</option>
-            <option value="Complejo Cerrado / Galpón">Complejo Cerrado / Galpón</option>
-          </select>
-        </div>
+
+        <button type="button" class="btn-action" style="width:100%; justify-content:center; margin-top:20px; padding:14px;" onclick="irAlPaso2()">
+          Continuar al Inventario de Bienes <i class="fas fa-arrow-right"></i>
+        </button>
       </div>
     </div>
 
-    <!-- PASO 2: INVENTARIO REACTIVO CON SUBPANELES -->
-    <div class="card">
-      <div class="card-title"><i class="fas fa-boxes" style="color:var(--brand);"></i> 2. Inventario Detallado de Bienes</div>
-      
-      <div class="cat-tabs" id="catTabs">
-        <button class="cat-btn active" onclick="filtrarCategoria('todos')"><i class="fas fa-th-large"></i> Todos</button>
-        <button class="cat-btn" onclick="filtrarCategoria('dormitorio')"><i class="fas fa-bed"></i> Dormitorio</button>
-        <button class="cat-btn" onclick="filtrarCategoria('living')"><i class="fas fa-couch"></i> Living</button>
-        <button class="cat-btn" onclick="filtrarCategoria('comedor')"><i class="fas fa-utensils"></i> Comedor & Cocina</button>
-        <button class="cat-btn" onclick="filtrarCategoria('electro')"><i class="fas fa-plug"></i> Electrodomésticos</button>
-        <button class="cat-btn" onclick="filtrarCategoria('oficina')"><i class="fas fa-laptop"></i> Oficina</button>
-        <button class="cat-btn" onclick="filtrarCategoria('bultos')"><i class="fas fa-box"></i> Cajas & Varios</button>
-      </div>
-
-      <div class="inventory-grid" id="inventoryGrid">
-        <!-- Renderizado dinámico vía JavaScript -->
-      </div>
-    </div>
-
-    <!-- PASO 3: OBSERVACIONES ADICIONALES -->
-    <div class="card">
-      <div class="card-title"><i class="fas fa-clipboard-list" style="color:var(--brand);"></i> 3. Observaciones / Comentarios</div>
-      <div class="form-group">
-        <label>Aclaraciones especiales (objetos delicados, desarme de muebles, etc.)</label>
-        <textarea id="cli_obs" rows="3" placeholder="Ej: Mesa de vidrio muy pesada, se necesita peón para subir por escalera..."></textarea>
-      </div>
-    </div>
-
-    <!-- BARRA FLOTANTE DE TOTALES Y ENVÍO -->
-    <div class="summary-bar">
-      <div class="summary-stats">
-        <div class="stat-item">
-          <span class="stat-label">Bultos / Muebles</span>
-          <span class="stat-val" id="totalItemsDisplay">0</span>
+    <!-- ========================================================
+         PASO 2: INVENTARIO ULTRA DETALLADO Y DESPACHO
+         ======================================================== -->
+    <div id="pantallaPaso2" style="display:none;">
+      <div class="card">
+        <div class="card-title"><i class="fas fa-boxes" style="color:var(--brand);"></i> 2. Inventario Detallado (Multi-Unidad)</div>
+        
+        <div class="cat-tabs">
+          <button class="cat-btn active" onclick="filtrarCategoria('todos')"><i class="fas fa-th-large"></i> Todos</button>
+          <button class="cat-btn" onclick="filtrarCategoria('dormitorio')"><i class="fas fa-bed"></i> Dormitorio</button>
+          <button class="cat-btn" onclick="filtrarCategoria('living')"><i class="fas fa-couch"></i> Living</button>
+          <button class="cat-btn" onclick="filtrarCategoria('comedor')"><i class="fas fa-utensils"></i> Mesas &amp; Comedor</button>
+          <button class="cat-btn" onclick="filtrarCategoria('electro')"><i class="fas fa-plug"></i> Electrodomésticos</button>
+          <button class="cat-btn" onclick="filtrarCategoria('oficina')"><i class="fas fa-laptop"></i> Oficina</button>
+          <button class="cat-btn" onclick="filtrarCategoria('bultos')"><i class="fas fa-box"></i> Cajas &amp; Varios</button>
         </div>
-        <div class="stat-item">
-          <span class="stat-label">Volumen Est.</span>
-          <span class="stat-val" style="color:var(--brand);" id="totalM3Display">0.0 m³</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-label">Unidad Sugerida</span>
-          <span class="stat-val" style="font-size:1rem; color:var(--success);" id="vehiculoSugeridoDisplay">A definir</span>
+
+        <div class="inventory-grid" id="inventoryGrid"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><i class="fas fa-clipboard-list" style="color:var(--brand);"></i> 3. Observaciones Adicionales</div>
+        <div class="form-group">
+          <label>Aclaraciones especiales (bienes muy pesados, pianos, objetos frágiles, etc.)</label>
+          <textarea id="cli_obs" rows="3" placeholder="Ej: Se traslada heladera grande, se requiere embalaje especial para televisor..."></textarea>
         </div>
       </div>
-      <button class="btn-submit" id="btnEnviar" onclick="enviarCotizacionFinal()">
-        <i class="fab fa-whatsapp" style="font-size:1.2rem;"></i> Cotizar y Enviar
-      </button>
-    </div>
 
-    <div class="status-msg" id="statusMsg"></div>
+      <div class="summary-bar">
+        <button class="btn-back" onclick="volverAlPaso1()"><i class="fas fa-arrow-left"></i> Modificar Datos</button>
+        <div class="summary-stats">
+          <div class="stat-item">
+            <span class="stat-label">Bultos</span>
+            <span class="stat-val" id="totalItemsDisplay">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Volumen Est.</span>
+            <span class="stat-val" style="color:var(--brand);" id="totalM3Display">0.0 m³</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Unidad Sugerida</span>
+            <span class="stat-val" style="font-size:0.95rem; color:var(--success);" id="vehiculoSugeridoDisplay">A definir</span>
+          </div>
+        </div>
+        <button class="btn-action" id="btnEnviar" onclick="enviarCotizacionFinal()">
+          <i class="fab fa-whatsapp" style="font-size:1.15rem;"></i> Cotizar y Enviar
+        </button>
+      </div>
+    </div>
   </div>
 
   <script>
     // =========================================================================
-    // CONFIGURACIÓN SUPABASE - CONEXIÓN CON TU ERP
-    // (Pega aquí la URL y la Anon Key de tu proyecto Supabase)
+    // DICCIONARIO UNICODE INDESTRUCTIBLE (ANTI-SIGNOS DE PREGUNTA EN WHATSAPP)
     // =========================================================================
-    const SUPABASE_URL = 'https://TU_PROYECTO.supabase.co';
-    const SUPABASE_ANON_KEY = 'TU_ANON_KEY_PUBLICA';
-    const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+    const EMOJI = {
+      CAMION: '\u{1F69A}',         // 🚚
+      CLIENTE: '\u{1F464}',        // 👤
+      CELULAR: '\u{1F4F1}',        // 📱
+      ORIGEN: '\u{1F4CD}',         // 📍
+      DESTINO: '\u{1F3C1}',        // 🏁
+      CALENDARIO: '\u{1F5D3}\uFE0F',// 🗓️
+      EDIFICIO: '\u{1F3E2}',       // 🏢
+      CAJA: '\u{1F4E6}',           // 📦
+      REGLA: '\u{1F4D0}',          // 📐
+      CAMION_GRANDE: '\u{1F69B}',  // 🚛
+      NOTA: '\u{1F4DD}',           // 📝
+      CHECK: '\u{2705}',           // ✅
+      RUTA: '\u{1F6E3}\uFE0F'      // 🛣️
+    };
 
-    // WHATSAPP RECEPTOR DE NIVEL 9 (Córdoba)
-    const WA_DESTINO = '5493512233444'; // Modificar si tienes un número exclusivo de recepción
+    const WA_DESTINO = '5493512233444'; // Número de recepción comercial Nivel 9
+    let modalidadServicio = 'Mudanza Local';
+
+    function seleccionarModalidad(m) {
+      modalidadServicio = m;
+      document.getElementById('modLocal').classList.toggle('selected', m === 'Local');
+      document.getElementById('modLarga').classList.toggle('selected', m === 'Larga Distancia');
+    }
 
     // =========================================================================
-    // CATÁLOGO DE ITEMS CON VARIANTES LOGÍSTICAS
+    // NAVEGACIÓN ENTRE PASOS
+    // =========================================================================
+    function irAlPaso2() {
+      const nombre = document.getElementById('cli_nombre').value.trim();
+      const tel = document.getElementById('cli_tel').value.trim();
+      const origen = document.getElementById('cli_origen').value.trim();
+      const destino = document.getElementById('cli_destino').value.trim();
+
+      if (!nombre || !tel || !origen || !destino) {
+        alert('Por favor completa todos los campos obligatorios (*): Nombre, WhatsApp, Origen y Destino.');
+        return;
+      }
+
+      document.getElementById('pantallaPaso1').style.display = 'none';
+      document.getElementById('pantallaPaso2').style.display = 'block';
+      document.getElementById('stepPill1').classList.remove('active');
+      document.getElementById('stepPill2').classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    function volverAlPaso1() {
+      document.getElementById('pantallaPaso2').style.display = 'none';
+      document.getElementById('pantallaPaso1').style.display = 'block';
+      document.getElementById('stepPill2').classList.remove('active');
+      document.getElementById('stepPill1').classList.add('active');
+      window.scrollTo(0, 0);
+      if (map) map.invalidateSize();
+    }
+
+    // =========================================================================
+    // MAPA LEAFLET & RUTEADOR SATELITAL OSRM
+    // =========================================================================
+    let map, polylineRuta;
+    function initMap() {
+      map = L.map('map').setView([-31.4135, -64.1810], 11); // Córdoba Capital
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+      }).addTo(map);
+    }
+
+    async function geocodificarLugar(query) {
+      const q = query.toLowerCase().includes('argentina') ? query : `${query}, Argentina`;
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&countrycodes=ar&q=${encodeURIComponent(q)}`);
+        const data = await res.json();
+        if (data && data.length > 0) {
+          return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+        }
+      } catch (e) {}
+      return null;
+    }
+
+    async function trazarRutaMapa() {
+      const orig = document.getElementById('cli_origen').value.trim();
+      const dest = document.getElementById('cli_destino').value.trim();
+      if (!orig || !dest) return;
+
+      const p1 = await geocodificarLugar(orig);
+      const p2 = await geocodificarLugar(dest);
+      if (!p1 || !p2) return;
+
+      try {
+        const urlOSRM = `https://router.project-osrm.org/route/v1/driving/${p1.lon},${p1.lat};${p2.lon},${p2.lat}?overview=full&geometries=geojson`;
+        const r = await fetch(urlOSRM);
+        const d = await r.json();
+
+        if (d.routes && d.routes.length > 0) {
+          const distanciaKm = Math.round(d.routes[0].distance / 1000);
+          document.getElementById('cli_kms').value = distanciaKm;
+          document.getElementById('kmBadgeDisplay').innerText = `${distanciaKm} Km`;
+
+          const coordsGeoJSON = d.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
+          if (polylineRuta) map.removeLayer(polylineRuta);
+
+          polylineRuta = L.polyline(coordsGeoJSON, { color: '#ea580c', weight: 4 }).addTo(map);
+          map.fitBounds(polylineRuta.getBounds(), { padding: [30, 30] });
+        }
+      } catch (e) {}
+    }
+
+    // =========================================================================
+    // CATÁLOGO DE ITEMS (CON DESGLOSE MULTI-UNIDAD INDIVIDUAL)
     // =========================================================================
     const catalogoItems = [
-      // DORMITORIO
       {
         id: 'cama',
         nombre: 'Cama',
         categoria: 'dormitorio',
         icono: 'fa-bed',
-        m3: 1.5,
-        cantidad: 0,
+        m3Base: 1.4,
         variantes: ['1 Plaza', '1 Plaza y 1/2', '2 Plazas', 'Queen Size', 'King Size'],
-        varianteSelec: '2 Plazas',
-        extras: [{ id: 'sommier', label: 'Con Base Sommier', checked: true }]
+        permiteSommier: true,
+        unidades: []
       },
       {
         id: 'ropero',
         nombre: 'Placard / Ropero',
         categoria: 'dormitorio',
         icono: 'fa-door-closed',
-        m3: 2.2,
-        cantidad: 0,
-        variantes: ['2 Puertas', '3 Puertas', '4 Puertas o más', 'Vestidor modular'],
-        varianteSelec: '3 Puertas',
-        extras: [{ id: 'desarme', label: 'Requiere Desarme', checked: false }]
+        m3Base: 2.2,
+        variantes: ['2 Puertas', '3 Puertas', '4 Puertas o más', 'Vestidor Modular'],
+        permiteDesarme: true,
+        unidades: []
       },
       {
         id: 'comoda',
         nombre: 'Cómoda / Chifonier',
         categoria: 'dormitorio',
         icono: 'fa-archive',
-        m3: 0.9,
-        cantidad: 0,
+        m3Base: 0.9,
         variantes: ['Chica (3 cajones)', 'Mediana (4-5 cajones)', 'Grande'],
-        varianteSelec: 'Mediana (4-5 cajones)'
+        unidades: []
       },
-      {
-        id: 'mesadeluz',
-        nombre: 'Mesa de Luz',
-        categoria: 'dormitorio',
-        icono: 'fa-cube',
-        m3: 0.25,
-        cantidad: 0,
-        variantes: ['1 Unidad', 'Juego de 2 unidades'],
-        varianteSelec: 'Juego de 2 unidades'
-      },
-
-      // LIVING
       {
         id: 'sillon',
         nombre: 'Sillón / Sofá',
         categoria: 'living',
         icono: 'fa-couch',
-        m3: 1.8,
-        cantidad: 0,
+        m3Base: 1.8,
         variantes: ['1 Cuerpo (Poltrona)', '2 Cuerpos', '3 Cuerpos', 'Tipo L (3+1)', 'Tipo L (3+2)', 'Tipo L (3+3)', 'Sofá Cama'],
-        varianteSelec: '2 Cuerpos'
+        unidades: []
       },
       {
         id: 'racktv',
         nombre: 'Rack TV / Modular',
         categoria: 'living',
         icono: 'fa-tv',
-        m3: 1.1,
-        cantidad: 0,
-        variantes: ['Chico (<1.20m)', 'Mediano (1.20m - 1.60m)', 'Modular grande de pared (>1.80m)'],
-        varianteSelec: 'Mediano (1.20m - 1.60m)'
+        m3Base: 1.1,
+        variantes: ['Chico (<1.20m)', 'Mediano (1.20m - 1.60m)', 'Modular Grande (>1.80m)'],
+        unidades: []
       },
       {
-        id: 'mesaratona',
-        nombre: 'Mesa Ratona de Centro',
-        categoria: 'living',
-        icono: 'fa-table',
-        m3: 0.4,
-        cantidad: 0,
-        variantes: ['Madera', 'Con Tapa de Vidrio / Mármol'],
-        varianteSelec: 'Madera'
-      },
-      {
-        id: 'tv',
-        nombre: 'Televisor / Pantalla',
-        categoria: 'living',
-        icono: 'fa-desktop',
-        m3: 0.3,
-        cantidad: 0,
-        variantes: ['Hasta 43"', '50" a 65"', '70" o más'],
-        varianteSelec: '50" a 65"',
-        extras: [{ id: 'caja_orig', label: 'En Caja Original', checked: false }]
-      },
-
-      // COMEDOR & COCINA
-      {
-        id: 'mesacomedor',
+        id: 'mesa',
         nombre: 'Mesa de Comedor',
         categoria: 'comedor',
         icono: 'fa-utensils',
-        m3: 1.6,
-        cantidad: 0,
-        variantes: ['Para 4 Sillas', 'Para 6 Sillas', 'Para 8 Sillas o más / Extensible'],
-        varianteSelec: 'Para 6 Sillas',
-        extras: [{ id: 'vidrio', label: 'Tapa de Vidrio Templado', checked: false }]
+        m3Base: 1.5,
+        formas: ['Rectangular', 'Cuadrada', 'Redonda'],
+        sillasOpciones: ['Sin Sillas', 'Con 2 Sillas', 'Con 4 Sillas', 'Con 6 Sillas', 'Con 8 Sillas'],
+        unidades: []
       },
-      {
-        id: 'sillas',
-        nombre: 'Sillas de Comedor',
-        categoria: 'comedor',
-        icono: 'fa-chair',
-        m3: 0.2,
-        cantidad: 0,
-        variantes: ['Juego x 4', 'Juego x 6', 'Juego x 8', 'Banquetas de Barra'],
-        varianteSelec: 'Juego x 6'
-      },
-      {
-        id: 'vajillero',
-        nombre: 'Vajillero / Aparador',
-        categoria: 'comedor',
-        icono: 'fa-wine-glass',
-        m3: 1.4,
-        cantidad: 0,
-        variantes: ['Madera Ciega', 'Con Puertas/Estantes de Vidrio'],
-        varianteSelec: 'Madera Ciega'
-      },
-
-      // ELECTRODOMÉSTICOS
       {
         id: 'heladera',
         nombre: 'Heladera / Freezer',
         categoria: 'electro',
         icono: 'fa-snowflake',
-        m3: 1.6,
-        cantidad: 0,
+        m3Base: 1.6,
         variantes: ['Bajo Mesada / Frigobar', '1 Puerta Estándar', 'Con Freezer (2 Puertas)', 'Side by Side (2 Puertas)', 'Freezer de Pozo'],
-        varianteSelec: 'Con Freezer (2 Puertas)'
+        unidades: []
       },
       {
         id: 'lavarropas',
         nombre: 'Lavarropas / Secarropas',
         categoria: 'electro',
         icono: 'fa-tint',
-        m3: 0.7,
-        cantidad: 0,
+        m3Base: 0.7,
         variantes: ['Carga Superior', 'Carga Frontal', 'Lavasecarropas'],
-        varianteSelec: 'Carga Frontal'
+        unidades: []
       },
       {
         id: 'cocina',
         nombre: 'Cocina / Horno',
         categoria: 'electro',
         icono: 'fa-fire',
-        m3: 0.6,
-        cantidad: 0,
+        m3Base: 0.6,
         variantes: ['Cocina 4 Hornallas', 'Industrial 6 Hornallas', 'Microondas / Horno de Mesa'],
-        varianteSelec: 'Cocina 4 Hornallas'
+        unidades: []
       },
-
-      // OFICINA & ESTUDIO
       {
         id: 'escritorio',
         nombre: 'Escritorio',
         categoria: 'oficina',
         icono: 'fa-laptop',
-        m3: 0.8,
-        cantidad: 0,
-        variantes: ['Simple (<1.20m)', 'Con Cajonera', 'En L / Puesto Gerencial'],
-        varianteSelec: 'Con Cajonera'
+        m3Base: 0.8,
+        variantes: ['Simple (<1.20m)', 'Con Cajonera', 'En L / Gerencial'],
+        unidades: []
       },
       {
         id: 'sillaoficina',
         nombre: 'Silla de Oficina',
         categoria: 'oficina',
         icono: 'fa-chair',
-        m3: 0.35,
-        cantidad: 0,
-        variantes: ['Operativa / Estándar', 'Sillón Gerencial con Ruedas'],
-        varianteSelec: 'Sillón Gerencial con Ruedas'
+        m3Base: 0.35,
+        variantes: ['Operativa Estándar', 'Sillón Gerencial con Ruedas'],
+        unidades: []
       },
-      {
-        id: 'biblioteca',
-        nombre: 'Biblioteca / Estantería',
-        categoria: 'oficina',
-        icono: 'fa-book',
-        m3: 1.0,
-        cantidad: 0,
-        variantes: ['Metálica Desarmable', 'Madera Fija Pesada'],
-        varianteSelec: 'Metálica Desarmable'
-      },
-
-      // BULTOS & VARIOS
       {
         id: 'cajas',
         nombre: 'Cajas de Embalaje',
         categoria: 'bultos',
         icono: 'fa-box',
-        m3: 0.12,
-        cantidad: 0,
+        m3Base: 0.12,
         variantes: ['Medianas (Vajilla / Libros)', 'Grandes (Ropa / Varios)'],
-        varianteSelec: 'Medianas (Vajilla / Libros)'
+        unidades: []
       },
       {
         id: 'valijas',
-        nombre: 'Valijas / Bolsos',
+        nombre: 'Valijas / Bolsas',
         categoria: 'bultos',
         icono: 'fa-suitcase-rolling',
-        m3: 0.18,
-        cantidad: 0,
+        m3Base: 0.18,
         variantes: ['Valija Rígida', 'Bolsas de Consorcio'],
-        varianteSelec: 'Valija Rígida'
-      },
-      {
-        id: 'bicicleta',
-        nombre: 'Bicicleta / Rodado',
-        categoria: 'bultos',
-        icono: 'fa-bicycle',
-        m3: 0.5,
-        cantidad: 0,
-        variantes: ['Bicicleta Adulto', 'Bicicleta Niño / Monopatín'],
-        varianteSelec: 'Bicicleta Adulto'
-      },
-      {
-        id: 'plantas',
-        nombre: 'Plantas / Macetas',
-        categoria: 'bultos',
-        icono: 'fa-seedling',
-        m3: 0.25,
-        cantidad: 0,
-        variantes: ['Chicas', 'Grandes / Pesadas'],
-        varianteSelec: 'Grandes / Pesadas'
+        unidades: []
       }
     ];
 
     // =========================================================================
-    // RENDERIZADO DEL INVENTARIO
+    // RENDERIZADO DEL INVENTARIO (CON GESTIÓN POR CADA UNIDAD)
     // =========================================================================
+    let categoriaActiva = 'todos';
+
     function renderizarInventario(filtro = 'todos') {
       const grid = document.getElementById('inventoryGrid');
       grid.innerHTML = '';
 
-      catalogoItems.forEach((item, index) => {
+      catalogoItems.forEach((item, itemIdx) => {
         if (filtro !== 'todos' && item.categoria !== filtro) return;
 
-        const hasQty = item.cantidad > 0;
+        const count = item.unidades.length;
         const card = document.createElement('div');
-        card.className = `item-card ${hasQty ? 'has-qty' : ''}`;
+        card.className = `item-card ${count > 0 ? 'has-qty' : ''}`;
         card.id = `card_${item.id}`;
 
-        let chipsHTML = '';
-        if (item.variantes) {
-          chipsHTML = `
-            <span class="subpanel-label">Tipo / Medida:</span>
-            <div class="chip-group">
-              ${item.variantes.map(v => `
-                <div class="chip ${item.varianteSelec === v ? 'selected' : ''}" onclick="seleccionarChip(${index}, '${v}')">
-                  ${v}
+        let subpanelHTML = '';
+        if (count > 0) {
+          subpanelHTML = item.unidades.map((u, uIdx) => {
+            if (item.id === 'mesa') {
+              return `
+                <div class="unit-block">
+                  <div class="unit-title"><span>Mesa #${uIdx + 1}</span></div>
+                  <div style="font-size:0.72rem; color:var(--text-muted); margin-bottom:4px;">Forma de Mesa:</div>
+                  <div class="chip-group">
+                    ${item.formas.map(f => `
+                      <div class="chip ${u.forma === f ? 'selected' : ''}" onclick="setMesaParam(${itemIdx}, ${uIdx}, 'forma', '${f}')">${f}</div>
+                    `).join('')}
+                  </div>
+                  <div style="font-size:0.72rem; color:var(--text-muted); margin-bottom:4px; margin-top:6px;">Cantidad de Sillas:</div>
+                  <div class="chip-group">
+                    ${item.sillasOpciones.map(s => `
+                      <div class="chip ${u.sillas === s ? 'selected' : ''}" onclick="setMesaParam(${itemIdx}, ${uIdx}, 'sillas', '${s}')">${s}</div>
+                    `).join('')}
+                  </div>
                 </div>
-              `).join('')}
-            </div>
-          `;
-        }
+              `;
+            }
 
-        let extrasHTML = '';
-        if (item.extras) {
-          extrasHTML = item.extras.map((ex, exIdx) => `
-            <label class="checkbox-extra">
-              <input type="checkbox" ${ex.checked ? 'checked' : ''} onchange="toggleExtra(${index}, ${exIdx}, this.checked)" />
-              ${ex.label}
-            </label>
-          `).join('');
+            return `
+              <div class="unit-block">
+                <div class="unit-title"><span>${item.nombre} #${uIdx + 1}</span></div>
+                <div class="chip-group">
+                  ${item.variantes.map(v => `
+                    <div class="chip ${u.variante === v ? 'selected' : ''}" onclick="setUnidadVariante(${itemIdx}, ${uIdx}, '${v}')">${v}</div>
+                  `).join('')}
+                </div>
+                ${item.permiteSommier ? `
+                  <label class="checkbox-extra">
+                    <input type="checkbox" ${u.sommier ? 'checked' : ''} onchange="toggleUnidadExtra(${itemIdx}, ${uIdx}, 'sommier', this.checked)" />
+                    Con Base Sommier
+                  </label>
+                ` : ''}
+                ${item.permiteDesarme ? `
+                  <label class="checkbox-extra">
+                    <input type="checkbox" ${u.desarme ? 'checked' : ''} onchange="toggleUnidadExtra(${itemIdx}, ${uIdx}, 'desarme', this.checked)" />
+                    Requiere Desarme
+                  </label>
+                ` : ''}
+              </div>
+            `;
+          }).join('');
         }
 
         card.innerHTML = `
@@ -817,15 +983,12 @@
               <div class="item-name">${item.nombre}</div>
             </div>
             <div class="item-counter">
-              <button class="btn-step" onclick="modificarCantidad(${index}, -1)">-</button>
-              <span class="qty-display" id="qty_${item.id}">${item.cantidad}</span>
-              <button class="btn-step" onclick="modificarCantidad(${index}, 1)">+</button>
+              <button class="btn-step" onclick="modificarCantidadItem(${itemIdx}, -1)">-</button>
+              <span class="qty-display">${count}</span>
+              <button class="btn-step" onclick="modificarCantidadItem(${itemIdx}, 1)">+</button>
             </div>
           </div>
-          <div class="item-subpanel">
-            ${chipsHTML}
-            ${extrasHTML}
-          </div>
+          ${subpanelHTML}
         `;
         grid.appendChild(card);
       });
@@ -833,30 +996,38 @@
       actualizarTotales();
     }
 
-    function modificarCantidad(index, delta) {
-      catalogoItems[index].cantidad = Math.max(0, catalogoItems[index].cantidad + delta);
-      const item = catalogoItems[index];
-      const card = document.getElementById(`card_${item.id}`);
-      const qty = document.getElementById(`qty_${item.id}`);
-      
-      if (qty) qty.innerText = item.cantidad;
-      if (card) {
-        if (item.cantidad > 0) card.classList.add('has-qty');
-        else card.classList.remove('has-qty');
+    function modificarCantidadItem(itemIdx, delta) {
+      const item = catalogoItems[itemIdx];
+      if (delta > 0) {
+        if (item.id === 'mesa') {
+          item.unidades.push({ forma: 'Rectangular', sillas: 'Con 4 Sillas' });
+        } else {
+          item.unidades.push({
+            variante: item.variantes[0],
+            sommier: item.permiteSommier || false,
+            desarme: false
+          });
+        }
+      } else if (item.unidades.length > 0) {
+        item.unidades.pop();
       }
-      actualizarTotales();
-    }
-
-    function seleccionarChip(itemIdx, valor) {
-      catalogoItems[itemIdx].varianteSelec = valor;
       renderizarInventario(categoriaActiva);
     }
 
-    function toggleExtra(itemIdx, extraIdx, checked) {
-      catalogoItems[itemIdx].extras[extraIdx].checked = checked;
+    function setUnidadVariante(itemIdx, uIdx, val) {
+      catalogoItems[itemIdx].unidades[uIdx].variante = val;
+      renderizarInventario(categoriaActiva);
     }
 
-    let categoriaActiva = 'todos';
+    function setMesaParam(itemIdx, uIdx, campo, val) {
+      catalogoItems[itemIdx].unidades[uIdx][campo] = val;
+      renderizarInventario(categoriaActiva);
+    }
+
+    function toggleUnidadExtra(itemIdx, uIdx, campo, checked) {
+      catalogoItems[itemIdx].unidades[uIdx][campo] = checked;
+    }
+
     function filtrarCategoria(cat) {
       categoriaActiva = cat;
       document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
@@ -864,20 +1035,19 @@
       renderizarInventario(cat);
     }
 
-    // =========================================================================
-    // CÁLCULO DE TOTALES Y SUGERENCIA DE UNIDAD
-    // =========================================================================
     function actualizarTotales() {
       let totalItems = 0;
       let totalM3 = 0;
 
       catalogoItems.forEach(i => {
-        if (i.cantidad > 0) {
-          totalItems += i.cantidad;
-          let m3Item = i.m3;
-          if (i.extras && i.extras.some(e => e.id === 'sommier' && e.checked)) m3Item += 0.8;
-          totalM3 += i.cantidad * m3Item;
-        }
+        totalItems += i.unidades.length;
+        i.unidades.forEach(u => {
+          let m3 = i.m3Base;
+          if (u.sommier) m3 += 0.8;
+          if (u.sillas && u.sillas.includes('6')) m3 += 0.4;
+          if (u.sillas && u.sillas.includes('8')) m3 += 0.8;
+          totalM3 += m3;
+        });
       });
 
       document.getElementById('totalItemsDisplay').innerText = totalItems;
@@ -892,110 +1062,68 @@
     }
 
     // =========================================================================
-    // CONSTRUCCIÓN DEL MENSAJE WHATSAPP (PLANTILLA INTACTA CON EMOJIS)
+    // DESPACHO FINAL A WHATSAPP (100% LIBRE DE ROMBOS )
     // =========================================================================
-    function compilarTextoInventario() {
-      const lineas = [];
-      catalogoItems.forEach(i => {
-        if (i.cantidad > 0) {
-          let det = i.varianteSelec ? ` - ${i.varianteSelec}` : '';
-          if (i.extras) {
-            const exActivos = i.extras.filter(e => e.checked).map(e => e.label);
-            if (exActivos.length > 0) det += ` (${exActivos.join(', ')})`;
-          }
-          lineas.push(`• ${i.cantidad}x ${i.nombre}${det}`);
-        }
-      });
-      return lineas.length > 0 ? lineas.join('\n') : 'Sin bultos declarados';
-    }
-
-    // =========================================================================
-    // ENVÍO DUAL: SUPABASE (ERP EN VIVO) + WHATSAPP
-    // =========================================================================
-    async function enviarCotizacionFinal() {
+    function enviarCotizacionFinal() {
       const nombre = document.getElementById('cli_nombre').value.trim();
       const tel = document.getElementById('cli_tel').value.trim();
       const origen = document.getElementById('cli_origen').value.trim();
       const destino = document.getElementById('cli_destino').value.trim();
+      const accOrigen = document.getElementById('cli_accesos_origen').value;
+      const accDestino = document.getElementById('cli_accesos_destino').value;
+      const kms = document.getElementById('cli_kms').value || '0';
       const fecha = document.getElementById('cli_fecha').value || new Date().toISOString().split('T')[0];
-      const accesos = document.getElementById('cli_accesos').value;
       const obs = document.getElementById('cli_obs').value.trim();
-
-      if (!nombre || !tel || !origen || !destino) {
-        alert('Por favor completa Nombre, Teléfono, Origen y Destino antes de continuar.');
-        return;
-      }
 
       const totalItems = document.getElementById('totalItemsDisplay').innerText;
       const totalM3 = document.getElementById('totalM3Display').innerText;
       const vehiculo = document.getElementById('vehiculoSugeridoDisplay').innerText;
-      const inventarioTxt = compilarTextoInventario();
 
-      const btn = document.getElementById('btnEnviar');
-      const statusMsg = document.getElementById('statusMsg');
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+      // Construcción del inventario desglosado
+      const lineas = [];
+      catalogoItems.forEach(item => {
+        item.unidades.forEach((u, idx) => {
+          if (item.id === 'mesa') {
+            lineas.push(`• Mesa #${idx + 1}: ${u.forma} (${u.sillas})`);
+          } else {
+            let extraTxt = u.sommier ? ' [Con Sommier]' : '';
+            if (u.desarme) extraTxt += ' [Requiere Desarme]';
+            lineas.push(`• ${item.nombre} #${idx + 1}: ${u.variante}${extraTxt}`);
+          }
+        });
+      });
+      const inventarioTxt = lineas.length > 0 ? lineas.join('\n') : 'Sin bultos seleccionados';
 
-      // 1. IMPACTO AUTOMÁTICO EN SUPABASE (ERP NIVEL 9)
-      if (supabaseClient) {
-        try {
-          const payloadSupabase = {
-            id: 'MOV-' + Date.now(),
-            fecha: fecha,
-            estado: 'Autocotización',
-            tipocliente: 'Particular',
-            cliente: nombre,
-            telefono: tel,
-            tipomov: 'Mudanzas y Muebles',
-            asignacion: vehiculo.includes('Furgón') ? 'Furgón' : vehiculo.includes('Chasis') ? 'Chasis' : 'Camión Semi',
-            origen: origen,
-            destino: destino,
-            distancia: '0',
-            inventario: `Accesos: ${accesos}\nVolumen: ${totalM3} (${totalItems} bultos)\n\nDetalle:\n${inventarioTxt}\n\nObs: ${obs}`,
-            presupuesto: '0',
-            sena: '0',
-            total: '0'
-          };
+      const fechaFmt = fecha.split('-').reverse().join('/');
 
-          const { error } = await supabaseClient.from('movimientos').insert([payloadSupabase]);
-          if (error) console.warn('Aviso Supabase:', error.message);
-        } catch (e) {
-          console.warn('Conexión Supabase no disponible en este momento:', e);
-        }
-      }
+      // Mensaje estructurado con secuencias Unicode infalibles
+      const mensaje = 
+`${EMOJI.CAMION} *SOLICITUD DE COTIZACIÓN - NIVEL 9 LOGÍSTICA*
 
-      // 2. COMPILACIÓN WHATSAPP OFICIAL CON EMOJIS
-      const mensajeWA = 
-`🚚 *SOLICITUD DE COTIZACIÓN - NIVEL 9 LOGÍSTICA*
+${EMOJI.CLIENTE} *Cliente:* ${nombre}
+${EMOJI.CELULAR} *WhatsApp:* ${tel}
+${EMOJI.ORIGEN} *Origen:* ${origen}
+${EMOJI.EDIFICIO} *Accesos Origen:* ${accOrigen}
+${EMOJI.DESTINO} *Destino:* ${destino}
+${EMOJI.EDIFICIO} *Accesos Destino:* ${accDestino}
+${EMOJI.RUTA} *Distancia Estimada:* ${kms} Km (${modalidadServicio})
+${EMOJI.CALENDARIO} *Fecha Sugerida:* ${fechaFmt}
 
-👤 *Cliente:* ${nombre}
-📱 *WhatsApp:* ${tel}
-📍 *Origen:* ${origen}
-🏁 *Destino:* ${destino}
-🗓️ *Fecha Sugerida:* ${fecha.split('-').reverse().join('/')}
-🏢 *Accesos:* ${accesos}
-
-📦 *INVENTARIO DECLARADO:*
+${EMOJI.CAJA} *INVENTARIO DECLARADO:*
 ${inventarioTxt}
 
-📐 *Volumen Estimado:* ${totalM3} (${totalItems} bultos totales)
-🚛 *Unidad Sugerida:* ${vehiculo}
-${obs ? `\n📝 *Observaciones:* ${obs}` : ''}
+${EMOJI.REGLA} *Volumen Estimado:* ${totalM3} (${totalItems} bultos totales)
+${EMOJI.CAMION_GRANDE} *Unidad Sugerida:* ${vehiculo}
+${obs ? `\n${EMOJI.NOTA} *Observaciones:* ${obs}` : ''}
 
 _Enviado desde el Cotizador Online Nivel 9_`;
 
-      const urlWhatsApp = `https://wa.me/${WA_DESTINO}?text=${encodeURIComponent(mensajeWA)}`;
-
-      // 3. APERTURA DE WHATSAPP
-      setTimeout(() => {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fab fa-whatsapp" style="font-size:1.2rem;"></i> Cotizar y Enviar';
-        window.open(urlWhatsApp, '_blank');
-      }, 350);
+      const urlWhatsApp = `https://wa.me/${WA_DESTINO}?text=${encodeURIComponent(mensaje)}`;
+      window.open(urlWhatsApp, '_blank');
     }
 
-    // Inicializar inventario al cargar
     window.addEventListener('DOMContentLoaded', () => {
+      initMap();
       renderizarInventario('todos');
     });
   </script>
